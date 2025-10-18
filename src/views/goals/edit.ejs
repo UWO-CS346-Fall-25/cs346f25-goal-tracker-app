@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Goal</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <main class="container">
+    <section class="getting-started">
+      <h2>Edit Goal</h2>
+      <form action="/goals/<%= goal.id %>/update" method="POST" data-validate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label for="title">Title*</label>
+          <input id="title" name="title" required maxlength="200" value="<%= goal.title %>"/>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="4"><%= goal.description || '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label for="target_date">Target Date</label>
+          <input id="target_date" name="target_date" type="date" value="<%= goal.target_date || '' %>"/>
+        </div>
+        <button class="btn" type="submit">Save</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <main class="container">
+    <section class="getting-started">
+      <h2>Settings</h2>
+      <form action="/settings" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label for="theme">Theme</label>
+          <select id="theme" name="theme">
+            <option value="default" selected>Default</option>
+            <option value="high-contrast">High Contrast</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="weekly_reminder">Weekly reminder email</label>
+          <select id="weekly_reminder" name="weekly_reminder">
+            <option value="on" selected>On</option>
+            <option value="off">Off</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">Save</button>
+      </form>
+    </section>
+
+    <section class="getting-started">
+      <h2>Validators & Disclaimer</h2>
+      <p>
+        <a href="https://validator.w3.org/" target="_blank" rel="noopener">HTML Validator</a> •
+        <a href="https://jigsaw.w3.org/css-validator/" target="_blank" rel="noopener">CSS Validator</a>
+      </p>
+      <p style="margin-top:.75rem">
+        <small>This site is under development by UW-Oshkosh students as a prototype for Goal Tracker.</small>
+      </p>
+    </section>
+  </main>
+</body>
+</html>

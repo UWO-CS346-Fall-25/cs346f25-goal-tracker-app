@@ -15,8 +15,16 @@ const helmet = require('helmet');
 const session = require('express-session');
 const csrf = require('csurf');
 
+//routers
+const indexRouter = require('./routes/index');
+const goalsRouter = require('./routes/goals');
+const usersRouter = require('./routes/users');
+
 // Initialize Express app
 const app = express();
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', 'layout');   
 
 // Security middleware - Helmet
 app.use(
@@ -39,8 +47,6 @@ app.set('views', path.join(__dirname, 'views'));
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
@@ -52,7 +58,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+      maxAge: 1000 * 60 * 60 * 24, 
     },
   })
 );
@@ -60,26 +66,23 @@ app.use(
 // CSRF protection
 // Note: Apply this after session middleware
 const csrfProtection = csrf({ cookie: false });
+app.use(csrfProtection);
 
 // Make CSRF token available to all views
 app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
   res.locals.user = req.session.user || null;
   next();
 });
 
-// Routes
-// Import and use your route files here
-// Example:
-// const indexRouter = require('./routes/index');
-// app.use('/', indexRouter);
+if (app.get('env') === 'development') {
+  app.set('view cache', false);
+  app.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+}
 
-// Placeholder home route
-app.get('/', csrfProtection, (req, res) => {
-  res.render('index', {
-    title: 'Home',
-    csrfToken: req.csrfToken(),
-  });
-});
+app.use('/', indexRouter);  
+app.use('/goals', goalsRouter);   
+app.use('/users', usersRouter);
 
 // 404 handler
 app.use((req, res) => {

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+        <main class="container">
+            <section class="features">
+                <h2>Overview</h2>
+                <p>Welcome back, <%= user?.username || 'friend' %>!</p>
+
+                <div class="feature-grid">
+                    <div class="feature">
+                        <h3>Total Goals</h3>
+                        <p><strong>
+                                <%= stats?.totalGoals || 0 %>
+                            </strong></p>
+                    </div>
+                    <div class="feature">
+                        <h3>Active Milestones</h3>
+                        <p><strong>
+                                <%= stats?.activeMilestones || 0 %>
+                            </strong></p>
+                    </div>
+                    <div class="feature">
+                        <h3>Logs this week</h3>
+                        <p><strong>
+                                <%= stats?.logsThisWeek || 0 %>
+                            </strong></p>
+                    </div>
+                </div>
+
+                <div class="getting-started">
+                    <h2>Progress Over Time</h2>
+                    <canvas id="progressChart" width="900" height="360"
+                        data-labels='<%- JSON.stringify((chart && chart.labels) || []) %>'
+                        data-values='<%- JSON.stringify((chart && chart.values) || []) %>'>
+                    </canvas>
+                </div>
+            </section>
+        </main>
+
+        <script src="/js/vendor/chart.min.js"></script>
+        <script>
+            const c = document.getElementById('progressChart');
+            const labels = JSON.parse(c.dataset.labels || '[]');
+            const values = JSON.parse(c.dataset.values || '[]');
+
+            if (labels.length) {
+                new Chart(c, {
+                    type: 'line',
+                    data: { labels, datasets: [{ label: 'Completion %', data: values }] },
+                    options: { responsive: true, scales: { y: { min: 0, max: 100 } } }
+                });
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Goals</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <main class="container">
+    <section class="features">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h2>Your Goals</h2>
+        <a href="/goals/new" class="btn">New Goal</a>
+      </div>
+
+      <% if (!goals || goals.length === 0) { %>
+        <p>No goals yet. <a href="/goals/new">Create your first goal</a>.</p>
+      <% } else { %>
+        <div class="feature-grid">
+          <% goals.forEach(g => { %>
+            <div class="feature">
+              <h3><a href="/goals/<%= g.id %>"><%= g.title %></a></h3>
+              <p><%= g.description || 'No description' %></p>
+              <p><small>Target: <%= g.target_date || '—' %></small></p>
+              <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+                <a class="btn" href="/goals/<%= g.id %>">Open</a>
+                <a class="btn" href="/goals/<%= g.id %>/edit">Edit</a>
+                <form action="/goals/<%= g.id %>/archive" method="POST" style="display:inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn" type="submit">Archive</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>
