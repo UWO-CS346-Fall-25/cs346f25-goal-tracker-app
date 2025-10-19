@@ -2,32 +2,33 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= title || 'Goal Tracker' %>
-  </title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>
+		<%= title || 'Goal Tracker' %>
+	</title>
 
-  <link rel="stylesheet" href="/css/style.css" />
-    <script>
-window.__APP__ = { csrfToken: "<%= csrfToken || '' %>" };
-    </script>
+	<link rel="stylesheet" href="/css/style.css" />
+	<script>
+		window.__APP__ = { csrfToken: "<%= csrfToken || '' %>" };
+	</script>
 </head>
 
 <body>
-  <!-- Main Content -->
-  <main class="container">
-    <%- body %>
-  </main>
+	<!-- Main Content -->
+	<main class="container">
+		<%- body %>
+	</main>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p>&copy; 2024 CS346 Project. All rights reserved.</p>
-    </div>
-  </footer>
+	<!-- Footer -->
+	<footer>
+		<div class="container">
+			<p>&copy; 2024 CS346 Project. All rights reserved.</p>
+		</div>
+	</footer>
 
-  <!-- JavaScript -->
-  <script src="/js/main.js"></script>
+	<!-- JavaScript -->
+	<script src="/js/main.js"></script>
 </body>
+
 </html>

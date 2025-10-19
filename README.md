@@ -1,6 +1,9 @@
-# CS346 Semester Project Template
+# CS346 Semester Project Goal tracking web application
+A modern, secure web application built with Node.js, Express, EJS, and PostgreSQL 
+for managing and tracking personal goals.
 
-A modern, secure web application built with Node.js, Express, EJS, and PostgreSQL — redesigned with a clean, futuristic interface for managing and tracking personal goals.
+# Authors
+Zafeer Rahim & Taylor Showalter
 
 ## Features
 
@@ -9,14 +12,13 @@ A modern, secure web application built with Node.js, Express, EJS, and PostgreSQ
 - 🗄️ **PostgreSQL** - Reliable relational database
 - 🔒 **Security First** - Helmet, CSRF protection, secure sessions
 - 📝 **Clean Code** - ESLint, Prettier, best practices
-- 🎓 **Educational** - Well-documented, instructional code
 
-## Quick Start
+## how to Start
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repository-url>
-   cd cs346-semester-project-template
+   git clone https://github.com/UWO-CS346-Fall-25/cs346f25-goal-tracker-app.git
+   cd filepath/cs346f25-goal-tracker-app
    ```
 
 2. **Install dependencies**
@@ -24,7 +26,7 @@ A modern, secure web application built with Node.js, Express, EJS, and PostgreSQ
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Set up environment variables, this step to 6 are skippable till the actual database is setup**
    ```bash
    cp .env.example .env
    # Edit .env with your database credentials
