@@ -1,4 +1,4 @@
-# CS346 Semester Project Template
+# Goal Tracking app
 
 A teaching template for building secure web applications with Node.js, Express, EJS, and PostgreSQL.
 
