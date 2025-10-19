@@ -1,6 +1,6 @@
 # CS346 Semester Project Template
 
-A teaching template for building secure web applications with Node.js, Express, EJS, and PostgreSQL.
+A modern, secure web application built with Node.js, Express, EJS, and PostgreSQL — redesigned with a clean, futuristic interface for managing and tracking personal goals.
 
 ## Features
 
