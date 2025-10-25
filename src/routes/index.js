@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
 // GET /hello  -> used by fetch()
 router.get('/hello', (req, res) => {
   const name = (req.query.name || 'there').trim();
-  res.json({ message: `Hello from index route, ${name}!` });
+  res.json({ message: `Hello from index route, ${name} this test button will probabbly be used for something like logging in later!` });
 });
 
 router.get('/about', (req, res) => {
