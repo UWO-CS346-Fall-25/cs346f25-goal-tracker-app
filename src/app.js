@@ -16,17 +16,6 @@ const session = require('express-session');
 const csrf = require('csurf');
 const expressLayouts = require('express-ejs-layouts');
 
-
-//routers
-const indexRouter = require('./routes/index');
-const goalsRouter = require('./routes/goals');
-const usersRouter = require('./routes/users');
-
-//routers
-const indexRouter = require('./routes/index');
-const goalsRouter = require('./routes/goals');
-const usersRouter = require('./routes/users');
-
 //routers
 const indexRouter = require('./routes/index');
 const goalsRouter = require('./routes/goals');
