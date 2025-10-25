@@ -25,5 +25,10 @@ router.get('/', indexController.getHome);
 router.get('/about', indexController.getAbout);
 router.get('/dashboard', indexController.getDashboard);
 router.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
+// demo JSON endpoint for client interactivity
+router.get('/hello', (_req, res) => {
+    res.json({ message: `Hello from the server @ ${new Date().toLocaleTimeString()}` });
+  });
+  
 
 module.exports = router;

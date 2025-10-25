@@ -22,16 +22,8 @@ const indexRouter = require('./routes/index');
 const goalsRouter = require('./routes/goals');
 const usersRouter = require('./routes/users');
 
-//routers
-const indexRouter = require('./routes/index');
-const goalsRouter = require('./routes/goals');
-const usersRouter = require('./routes/users');
-
 // Initialize Express app
-const app = express();
-const expressLayouts = require('express-ejs-layouts');
-app.use(expressLayouts);
-app.set('layout', 'layout');   
+const app = express();  
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
@@ -75,7 +67,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      secure: process.env.NODE_ENV === 'production', 
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24,
@@ -89,7 +81,7 @@ app.use(csrfProtection);
 
 // Make CSRF token available to all views
 app.use((req, res, next) => {
-  res.locals.csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
+  res.locals.csrfToken = (typeof req.csrfToken === 'function') ? req.csrfToken() : '';
   res.locals.user = req.session.user || null;
   next();
 });

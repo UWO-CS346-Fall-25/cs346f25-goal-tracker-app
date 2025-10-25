@@ -65,3 +65,24 @@ exports.destroy = async (req, res, next) => {
         res.redirect('/goals');
     } catch (e) { next(e); }
 };
+
+exports.postMilestone = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { title, due } = req.body; // names from your form inputs
+      // TODO: save to DB. For now, pretend success:
+      console.log('[milestone]', { goalId: id, title, due });
+      res.redirect(`/goals/${id}`);
+    } catch (err) { next(err); }
+  };
+  
+  exports.postLog = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { note, metricName, metricValue } = req.body;
+      // TODO: save to DB. For now, pretend success:
+      console.log('[log]', { goalId: id, note, metricName, metricValue });
+      res.redirect(`/goals/${id}`);
+    } catch (err) { next(err); }
+  };
+  
