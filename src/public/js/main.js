@@ -118,7 +118,32 @@ function initInteractiveElements() {
       }
     });
   });
+
+  //  Your Button Interactivity
+  //  Local DOM 
+  const btnLocal = document.getElementById("btnLocal");
+  const output1 = document.getElementById("output1");
+
+  if (btnLocal && output1) {
+    btnLocal.addEventListener("click", () => {
+      output1.textContent = "You just clicked the local button!";
+    });
+  }
+
+  // Fetch() 
+  const btnFetch = document.getElementById("btnFetch");
+  const output2 = document.getElementById("output2");
+
+  if (btnFetch && output2) {
+    btnFetch.addEventListener("click", async () => {
+      const res = await fetch("/hello");
+      const data = await res.json();
+      output2.textContent = data.message;
+    });
+  }
+
 }
+
 
 /**
  * Make an AJAX request
