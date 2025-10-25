@@ -11,30 +11,47 @@
 </head>
 
 <body>
-	<header>
-		<nav>
+	<main class="container">
+		<section class="hero">
 			<div class="container">
-				<a href="/" class="logo">Goal Tracker</a>
-				<ul class="nav-links">
-					<li><a href="/">Home</a></li>
-					<li><a href="/about">About</a></li>
+				<h1>Track Goals. Build Habits. Win Weeks.</h1>
+				<p>Goal Tracker helps you set milestones, visualize progress, and stay consistent.</p>
+				<div class="hero-cta">
+					<a href="/users/register" class="btn btn-accent">Create Account</a>
+					<a href="/about" class="btn btn-ghost">Learn More</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- PAGE NAV under hero -->
+		<nav class="page-nav">
+			<div class="page-nav__row">
+				<ul class="page-nav__links">
+
 					<% if (user) { %>
+						<li><a href="/goals/new" class="chip">New Goal</a></li>
+						<li><a href="/goals">Goals</a></li>
+						<li><a href="/dashboard">Dashboard</a></li>
 						<li><a href="/profile">Profile</a></li>
 						<li>
-							<form action="/users/logout" method="POST" style="display: inline;">
+							<form action="/users/logout" method="POST">
 								<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-								<button type="submit" class="btn-link">Logout</button>
+								<button type="submit" class="link-like">Logout</button>
 							</form>
 						</li>
 						<% } else { %>
 							<li><a href="/users/login">Login</a></li>
-							<li><a href="/users/register">Register</a></li>
+							<li><a href="/users/register" class="chip chip-accent">Get Started</a></li>
 							<% } %>
 				</ul>
 			</div>
 		</nav>
-	</header>
+<p id="output1"></p>
+<button id="btnLocal">Local Message</button>
+<p id="output2"></p>
+<button id="btnFetch">Fetch Message</button>
 
+<body>
 	<main class="container">
 		<section class="hero">
 			<div class="container">

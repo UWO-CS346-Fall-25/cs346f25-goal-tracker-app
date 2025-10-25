@@ -19,7 +19,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import controllers
-// const indexController = require('../controllers/indexController');
+const indexController = require('../controllers/indexController');
 
 // Define routes
 // router.get('/', indexController.getHome);
@@ -48,5 +48,9 @@ router.get('/dashboard', (req, res) => {
     chart: { labels: ['Mon','Tue','Wed','Thu','Fri'], values: [10,20,40,60,70] }
   });
 });
+router.get('/', indexController.getHome);
+router.get('/about', indexController.getAbout);
+router.get('/dashboard', indexController.getDashboard);
+router.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
 
 module.exports = router;
