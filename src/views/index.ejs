@@ -1,89 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>
-		<%= title %> - CS346 Project
-	</title>
-	<link rel="stylesheet" href="/css/style.css">
-</head>
-
-<body>
-	<main class="container">
-		<section class="hero">
-			<div class="container">
-				<h1>Track Goals. Build Habits. Win Weeks.</h1>
-				<p>Goal Tracker helps you set milestones, visualize progress, and stay consistent.</p>
-				<div class="hero-cta">
-					<a href="/users/register" class="btn btn-accent">Create Account</a>
-					<a href="/about" class="btn btn-ghost">Learn More</a>
-				</div>
-			</div>
-		</section>
-
-		<!-- PAGE NAV under hero -->
-		<nav class="page-nav">
-			<div class="page-nav__row">
-				<ul class="page-nav__links">
-
-					<% if (user) { %>
-						<li><a href="/goals/new" class="chip">New Goal</a></li>
-						<li><a href="/goals">Goals</a></li>
-						<li><a href="/dashboard">Dashboard</a></li>
-						<li><a href="/profile">Profile</a></li>
-						<li>
-							<form action="/users/logout" method="POST">
-								<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-								<button type="submit" class="link-like">Logout</button>
-							</form>
-						</li>
-						<% } else { %>
-							<li><a href="/users/login">Login</a></li>
-							<li><a href="/users/register" class="chip chip-accent">Get Started</a></li>
-							<% } %>
-				</ul>
-			</div>
-		</nav>
-
-		<section class="features">
-			<h2>Features</h2>
-			<div class="feature-grid">
-				<div class="feature">
-					<h3>👤 Accounts & Profiles</h3>
-					<p>Sign up, log in, manage your profile.</p>
-				</div>
-				<div class="feature">
-					<h3>🎯 Goals (CRUD)</h3>
-					<p>Create, update, archive goals like “Run 5k” or “Save $500”.</p>
-				</div>
-				<div class="feature">
-					<h3>🧩 Milestones</h3>
-					<p>Break big goals into steps with due dates and completion toggles.</p>
-				</div>
-				<div class="feature">
-					<h3>📒 Progress Logs</h3>
-					<p>Add dated notes + optional numeric value, with image/PDF upload.</p>
-				</div>
-				<div class="feature">
-					<h3>📈 Visualizations</h3>
-					<p>Line or pie charts to see completion over time.</p>
-				</div>
-		</section>
-
-		<section class="getting-started">
-			<h2>Getting Started</h2>
-			<ol>
-				<li>Copy <code>.env.example</code> to <code>.env</code> and configure your environment variables</li>
-				<li>Set up your PostgreSQL database</li>
-				<li>Run <code>npm run migrate</code> to create database tables</li>
-				<li>Run <code>npm run seed</code> to populate with sample data</li>
-				<li>Start the development server with <code>npm run dev</code></li>
-			</ol>
-		</section>
-	</main>
-	<script src="/js/main.js"></script>
-</body>
-
-</html>
+<section class="hero">
+	<h1>Track Goals. Build Habits. Win Weeks.</h1>
+	<p>Goal Tracker helps you set milestones, visualize progress, and stay consistent.</p>
+  </section>
+  
+  <!-- PAGE NAV under hero -->
+  <nav class="page-nav">
+	<div class="page-nav__row">
+	  <ul class="page-nav__links">
+		<% if (user) { %>
+		  <li><a href="/goals/new" class="chip">New Goal</a></li>
+		  <li><a href="/goals">Goals</a></li>
+		  <li><a href="/dashboard">Dashboard</a></li>
+		  <li><a href="/profile">Profile</a></li>
+		  <li>
+			<form action="/users/logout" method="POST">
+			  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+			  <button type="submit" class="link-like">Logout</button>
+			</form>
+		  </li>
+		<% } else { %>
+		  <li><a href="/users/login">Login</a></li>
+		  <li><a href="/users/register" class="chip chip-accent">Get Started</a></li>
+		<% } %>
+	  </ul>
+	</div>
+  </nav>
+  
+  <p id="output1"></p>
+  <button id="btnLocal">Local Message</button>
+  <p id="output2"></p>
+  <button id="btnFetch">Fetch Message</button>
+  
+  <h2>Features</h2>
+  <div class="feature-grid">
+	<% (features || []).forEach(function(f){ %>
+	  <div class="feature">
+		<h3><%= f.icon %> <%= f.title %></h3>
+		<p><%= f.copy %></p>
+	  </div>
+	<% }) %>
+  </div>
+  
+  <section class="getting-started">
+	<h2>Getting Started</h2>
+	<ol>
+	  <li>Copy <code>.env.example</code> to <code>.env</code> and configure your environment variables</li>
+	  <li>Set up your PostgreSQL database</li>
+	  <li>Run <code>npm run migrate</code> to create database tables</li>
+	  <li>Run <code>npm run seed</code> to populate with sample data</li>
+	  <li>Start the development server with <code>npm run dev</code></li>
+	</ol>
+  </section>
+  

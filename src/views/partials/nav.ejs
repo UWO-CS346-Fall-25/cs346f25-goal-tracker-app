@@ -1,0 +1,25 @@
+<header class="site-header">
+    <nav>
+      <div class="container nav-row" id="mainNav">
+        <a class="logo" href="/">Goal Tracker</a>
+        <ul class="nav-links">
+          <li><a href="/" data-path="/">Home</a></li>
+          <li><a href="/about" data-path="/about">About</a></li>
+  
+          <% if (user) { %>
+            <li><a href="/dashboard" data-path="/dashboard">Dashboard</a></li>
+            <li>
+              <form action="/users/logout" method="POST" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-link">Logout</button>
+              </form>
+            </li>
+          <% } else { %>
+            <li><a href="/users/login" data-path="/users/login">Login</a></li>
+            <li><a href="/users/register" data-path="/users/register">Register</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  

@@ -1,6 +1,16 @@
-// src/models/Goal.js
 const db = require('./db');
 
+function toDateOrNull(value) {
+    if (!value) return null;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  
+  function clampProgress(n) {
+    const x = Number.isFinite(+n) ? +n : 0;
+    return Math.max(0, Math.min(100, x));
+  }
+  
 module.exports = {
     async allByUser(userId) {
         const { rows } = await db.query(
