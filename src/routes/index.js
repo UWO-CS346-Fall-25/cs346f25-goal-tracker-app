@@ -22,8 +22,11 @@ const router = express.Router();
 const indexController = require('../controllers/indexController');
 
 // Define routes
-// router.get('/', indexController.getHome);
-
+ router.get('/', indexController.getHome);
+router.get('/', indexController.getHome);
+router.get('/about', indexController.getAbout);
+router.get('/dashboard', indexController.getDashboard);
+router.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
 // dummy comment
 router.get('/', (req, res) => {
   res.render('index', { title: 'Goal Tracker' });
@@ -48,10 +51,7 @@ router.get('/dashboard', (req, res) => {
     chart: { labels: ['Mon','Tue','Wed','Thu','Fri'], values: [10,20,40,60,70] }
   });
 });
-router.get('/', indexController.getHome);
-router.get('/about', indexController.getAbout);
-router.get('/dashboard', indexController.getDashboard);
-router.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
+
 // demo JSON endpoint for client interactivity
 router.get('/hello', (_req, res) => {
     res.json({ message: `Hello from the server @ ${new Date().toLocaleTimeString()}` });
