@@ -30,6 +30,11 @@ if (process.env.TRUST_PROXY === '1') {
   app.set('trust proxy', 1);
 }
 
+app.disable('x-powered-by');
+if (process.env.TRUST_PROXY === '1') {
+  app.set('trust proxy', 1);
+}
+
 // Security middleware - Helmet
 app.use(
   helmet({
