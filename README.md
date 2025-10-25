@@ -26,19 +26,19 @@ Zafeer Rahim & Taylor Showalter
    npm install
    ```
 
-3. **Set up environment variables, this step to 6 are skippable till the actual database is setup**
+3. **Set up environment variables, this step to 7 are skippable till the actual database is setup(skip no database yet)**
    ```bash
    cp .env.example .env
    # Edit .env with your database credentials
    ```
 
-4. **Set up PostgreSQL database**
+4. **Set up PostgreSQL database(skip no database yet)**
    ```bash
    # Create database (adjust credentials as needed)
    createdb your_database_name
    ```
 
-5. **Run migrations**
+5. **Run migrations(skip not done yet)**
    ```bash
    npm run migrate
    ```
@@ -57,6 +57,28 @@ Zafeer Rahim & Taylor Showalter
    ```
    http://localhost:3000
    ```
+9. **Verification for this week**
+```
+To verify the new interactive behavior:
+
+Start the application and do steps 1 thru 8 above
+Test Local Button
+
+Click Local Message button and Confirm the text under the button updates immediately
+
+Test Fetch Button and see
+
+Click Fetch Message button
+Confirm 3 things: The text updates. The browser’s Network tab 
+logs a request to GET /hello. The server responds with 
+JSON containing message
+
+Direct Route Test
+
+Visit:http://localhost:3000/hello
+Confirm a JSON response is displayed in the browser
+
+```
 
 ## Project Structure
 

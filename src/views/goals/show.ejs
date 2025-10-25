@@ -1,109 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= goal.title %></title>
-  <link rel="stylesheet" href="/css/style.css"/>
-</head>
-<body>
-  <main class="container">
-    <section class="features">
-      <h2><%= goal.title %></h2>
-      <p><%= goal.description || 'No description' %></p>
-      <p><small>Target: <%= goal.target_date || '—' %></small></p>
+<section class="features">
+  <h2><%= goal.title %></h2>
+  <p><%= goal.description || 'No description' %></p>
+  <p><small>Target: <%= goal.target_date || '—' %></small></p>
 
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0">
-        <a class="btn" href="/goals/<%= goal.id %>/edit">Edit</a>
-        <form action="/goals/<%= goal.id %>/archive" method="POST" style="display:inline">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <button class="btn" type="submit">Archive</button>
-        </form>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0">
+    <a class="btn" href="/goals/<%= goal.id %>/edit">Edit</a>
+    <form action="/goals/<%= goal.id %>/archive" method="POST" class="inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="btn" type="submit">Archive</button>
+    </form>
+  </div>
+
+  <!-- Milestones -->
+  <div class="getting-started">
+    <h2>Milestones</h2>
+    <ul style="margin:.5rem 0 1rem 1.25rem">
+      <% (milestones || []).forEach(m => { %>
+        <li style="margin:.35rem 0">
+          <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" class="inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit"><%= m.done ? '✅' : '⬜' %></button>
+          </form>
+          <strong><%= m.title %></strong>
+          <small>due <%= m.due_date || '—' %></small>
+          <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/delete" method="POST" class="inline" style="margin-left:.5rem">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Delete</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+
+    <form action="/goals/<%= goal.id %>/milestones" method="POST" data-validate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label for="m_title">Add milestone</label>
+        <input id="m_title" name="title" required />
       </div>
-
-      <!-- Milestones -->
-      <div class="getting-started">
-        <h2>Milestones</h2>
-        <ul style="margin:.5rem 0 1rem 1.25rem">
-          <% (milestones || []).forEach(m => { %>
-            <li style="margin:.35rem 0">
-              <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" style="display:inline">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button class="btn" type="submit"><%= m.done ? '✅' : '⬜' %></button>
-              </form>
-              <strong><%= m.title %></strong>
-              <small>due <%= m.due_date || '—' %></small>
-              <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/delete" method="POST" style="display:inline;margin-left:.5rem">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button class="btn" type="submit">Delete</button>
-              </form>
-            </li>
-          <% }) %>
-        </ul>
-
-        <form action="/goals/<%= goal.id %>/milestones" method="POST" data-validate>
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <div class="form-group">
-            <label for="m_title">Add milestone</label>
-            <input id="m_title" name="title" required />
-          </div>
-          <div class="form-group">
-            <label for="m_due">Due date</label>
-            <input id="m_due" type="date" name="due_date"/>
-          </div>
-          <button class="btn" type="submit">Add</button>
-        </form>
+      <div class="form-group">
+        <label for="m_due">Due date</label>
+        <input id="m_due" type="date" name="due_date" />
       </div>
+      <button class="btn" type="submit">Add</button>
+    </form>
+  </div>
 
-      <!-- Progress Logs -->
-      <div class="getting-started">
-        <h2>Progress Logs</h2>
-        <ul style="margin-left:1.25rem">
-          <% (logs || []).forEach(l => { %>
-            <li style="margin:.5rem 0">
-              <strong><%= l.entry_date %></strong> — <%= l.note %>
-              <% if (l.metric_name && l.metric_value != null) { %>
-                <em>(<%= l.metric_name %>: <%= l.metric_value %>)</em>
-              <% } %>
-              <% if (l.attachments && l.attachments.length) { %>
-                <div style="margin-top:.25rem;display:flex;gap:.5rem;flex-wrap:wrap">
-                  <% l.attachments.forEach(a => { %>
-                    <% if ((a.mime_type || '').startsWith('image/')) { %>
-                      <img src="<%= a.file_path %>" alt="Attachment" style="height:80px;border-radius:8px"/>
-                    <% } else { %>
-                      <a href="<%= a.file_path %>" class="btn">View file</a>
-                    <% } %>
-                  <% }) %>
-                </div>
-              <% } %>
-            </li>
-          <% }) %>
-        </ul>
+  <!-- Progress Logs -->
+  <div class="getting-started">
+    <h2>Progress Logs</h2>
 
-        <form action="/goals/<%= goal.id %>/logs" method="POST" enctype="multipart/form-data">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <div class="form-group">
-            <label for="note">Note*</label>
-            <textarea id="note" name="note" rows="3" required></textarea>
-          </div>
-          <div class="form-group" style="display:flex;gap:.75rem;flex-wrap:wrap">
-            <div style="flex:1 1 220px">
-              <label for="metric_name">Metric name (optional)</label>
-              <input id="metric_name" name="metric_name" placeholder="minutes, miles, dollars"/>
+    <ul style="margin-left:1.25rem">
+      <% (logs || []).forEach(l => { %>
+        <li style="margin:.5rem 0">
+          <strong><%= l.entry_date %></strong> — <%= l.note %>
+          <% if (l.metric_name && l.metric_value != null) { %>
+            <em>(<%= l.metric_name %>: <%= l.metric_value %>)</em>
+          <% } %>
+          <% if (l.attachments && l.attachments.length) { %>
+            <div style="margin-top:.25rem;display:flex;gap:.5rem;flex-wrap:wrap">
+              <% l.attachments.forEach(a => { %>
+                <% if ((a.mime_type || '').startsWith('image/')) { %>
+                  <img src="<%= a.file_path %>" alt="Attachment" style="height:80px;border-radius:8px"/>
+                <% } else { %>
+                  <a href="<%= a.file_path %>" class="btn">View file</a>
+                <% } %>
+              <% }) %>
             </div>
-            <div style="flex:1 1 160px">
-              <label for="metric_value">Metric value</label>
-              <input id="metric_value" name="metric_value" type="number" step="any"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="files">Attachments (images/PDFs)</label>
-            <input id="files" name="files" type="file" multiple accept="image/*,application/pdf"/>
-          </div>
-          <button class="btn" type="submit">Add Log</button>
-        </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+
+    <form action="/goals/<%= goal.id %>/logs" method="POST" enctype="multipart/form-data" data-validate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label for="note">Note*</label>
+        <textarea id="note" name="note" rows="3" required></textarea>
       </div>
-    </section>
-  </main>
-</body>
-</html>
+      <div class="form-group" style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <div style="flex:1 1 220px">
+          <label for="metric_name">Metric name (optional)</label>
+          <input id="metric_name" name="metric_name" placeholder="minutes, miles, dollars"/>
+        </div>
+        <div style="flex:1 1 160px">
+          <label for="metric_value">Metric value</label>
+          <input id="metric_value" name="metric_value" type="number" step="any"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="files">Attachments (images/PDFs)</label>
+        <input id="files" name="files" type="file" multiple accept="image/*,application/pdf"/>
+      </div>
+      <button class="btn" type="submit">Add Log</button>
+    </form>
+  </div>
+</section>

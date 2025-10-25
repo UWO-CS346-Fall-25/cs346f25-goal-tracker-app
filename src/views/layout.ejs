@@ -1,59 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>
-		<%= title || 'Goal Tracker' %>
-	</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? `${title} — Goal Tracker` : 'Goal Tracker' %></title>
 
-	<link rel="stylesheet" href="/css/style.css" />
-	<script>
-		window.__APP__ = { csrfToken: JSON.stringify(csrfToken || '') };
-	</script>
+  <!-- CSRF for client JS -->
+  <meta name="csrf-token" content="<%= (typeof csrfToken !== 'undefined' ? csrfToken : '') %>">
+
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
-
-<header class="site-header">
-	<nav>
-		<div class="container nav-row">
-			<a class="logo" href="/">Goal Tracker</a>
-			<ul class="nav-links">
-				<li><a href="/">Home</a></li>
-				<li><a href="/about">About</a></li>
-
-				<% if (user) { %>
-					<li><a href="/dashboard">Dashboard</a></li>
-					<li>
-						<form action="/users/logout" method="POST" style="display:inline">
-							<input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-							<button type="submit" class="btn-link">Logout</button>
-						</form>
-					</li>
-					<% } else { %>
-						<li><a href="/users/login">Login</a></li>
-						<li><a href="/users/register">Register</a></li>
-						<% } %>
-			</ul>
-		</div>
-	</nav>
-</header>
-
 <body>
-	<!-- Main Content -->
-	<main class="container">
-		<%- body %>
-	</main>
+  <!-- Global nav -->
+  <%- include('partials/nav') %>
 
-	<!-- Footer -->
-	<footer>
-		<div class="container">
-			<p>&copy; 2024 CS346 Project. All rights reserved.</p>
-		</div>
-	</footer>
+  <!-- Optional flash messages -->
+  <%- include('partials/flash') %>
 
-	<!-- JavaScript -->
-	<script src="/js/main.js"></script>
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <!-- Global footer -->
+  <%- include('partials/footer') %>
+
+  <script src="/js/main.js"></script>
 </body>
-
 </html>
