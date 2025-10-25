@@ -28,6 +28,12 @@ const router = express.Router();
 router.get('/', (req, res) => {
   res.render('index', { title: 'Goal Tracker' });
 });
+//interactivity
+// GET /hello  -> used by fetch()
+router.get('/hello', (req, res) => {
+  const name = (req.query.name || 'there').trim();
+  res.json({ message: `Hello from index route, ${name}!` });
+});
 
 router.get('/about', (req, res) => {
   // make a simple about.ejs or change this route
