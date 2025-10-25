@@ -126,7 +126,7 @@ function initInteractiveElements() {
 
   if (btnLocal && output1) {
     btnLocal.addEventListener("click", () => {
-      output1.textContent = "You just clicked the local button!";
+      output1.textContent = "You just clicked the local button!This was put here to meet the requirements of the deliverable of week 8, we may get rid of this button, or move it and repurpose it later.";
     });
   }
 
