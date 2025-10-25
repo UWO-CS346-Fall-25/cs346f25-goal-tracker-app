@@ -18,34 +18,54 @@
  * GET /
  * Display the home page
  */
+
+function renderPage(res, view, locals = {}, req) {
+  const baseLocals = {
+    user: req?.session?.user || null,
+  };
+
+  // csurf attaches req.csrfToken() only after csrf middleware; guard just in case
+  if (req && typeof req.csrfToken === 'function') {
+    baseLocals.csrfToken = req.csrfToken();
+  }
+
+  // Helpful during dev so template/CSS tweaks always show
+  if (res.app.get('env') === 'development') {
+    res.set('Cache-Control', 'no-store');
+  }
+
+  res.render(view, { ...baseLocals, ...locals });
+}
+
 exports.getHome = async (req, res, next) => {
   try {
-    // Fetch any data needed for the home page
-    // const data = await SomeModel.findAll();
-
-    res.render('index', {
-      title: 'Home',
-      // data: data,
-      csrfToken: req.csrfToken(),
-    });
+    const features = [
+      { icon: '👤', title: 'Accounts & Profiles', copy: 'Sign up, log in, manage your profile.' },
+      { icon: '🎯', title: 'Goals (CRUD)', copy: 'Create, update, archive goals like “Run 5k” or “Save $500”.' },
+      { icon: '🧩', title: 'Milestones', copy: 'Break big goals into steps with due dates and completion toggles.' },
+      { icon: '📒', title: 'Progress Logs', copy: 'Add dated notes and optional numeric values.' },
+      { icon: '📈', title: 'Visualizations', copy: 'Charts to see completion over time.' },
+    ];
+    renderPage(res, 'index', { title: 'Home', features }, req);
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * GET /about
- * Display the about page
- */
-exports.getAbout = async (req, res, next) => {
+exports.getAbout = (req, res) => {
+  res.render('about', { title: 'About', showHero: false });
+};
+
+exports.getDashboard = async (req, res, next) => {
   try {
-    res.render('about', {
-      title: 'About',
-      csrfToken: req.csrfToken(),
-    });
+    const stats = { totalGoals: 3, activeMilestones: 7, logsThisWeek: 2 };
+    const chart = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      values: [10, 20, 35, 50, 65, 70, 80],
+    };
+
+    renderPage(res, 'dashboard', { title: 'Dashboard', stats, chart }, req);
   } catch (error) {
     next(error);
   }
-};
-
-// Add more controller methods as needed
+}
