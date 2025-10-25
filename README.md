@@ -1,4 +1,4 @@
-# CS346 Semester Project Goal tracking web application
+# Goal Tracking app
 A modern, secure web application built with Node.js, Express, EJS, and PostgreSQL 
 for managing and tracking personal goals.
 
