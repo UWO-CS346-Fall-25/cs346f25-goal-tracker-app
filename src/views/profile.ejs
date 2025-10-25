@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<h1>Your Profile</h1>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Profile</title>
-	<link rel="stylesheet" href="/css/style.css" />
-</head>
-
-<body>
-	<main class="container">
-		<section class="getting-started">
-			<h2>Your Profile</h2>
-			<p><strong>Email:</strong>
-				<%= user.email %>
-			</p>
-
-			<form action="/users/profile" method="POST">
-				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-				<div class="form-group">
-					<label for="display_name">Display name</label>
-					<input id="display_name" name="display_name" value="<%= user.display_name || '' %>" />
-				</div>
-				<button class="btn" type="submit">Save</button>
-			</form>
-		</section>
-	</main>
-</body>
-
-</html>
+<% if (user) { %>
+  <div class="feature" style="max-width:520px;">
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <% if (user.name) { %>
+      <p><strong>Name:</strong> <%= user.name %></p>
+    <% } %>
+  </div>
+<% } else { %>
+  <p>You’re not signed in. <a href="/users/login">Login</a></p>
+<% } %>
