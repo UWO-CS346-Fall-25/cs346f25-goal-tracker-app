@@ -22,8 +22,16 @@ const indexRouter = require('./routes/index');
 const goalsRouter = require('./routes/goals');
 const usersRouter = require('./routes/users');
 
+//routers
+const indexRouter = require('./routes/index');
+const goalsRouter = require('./routes/goals');
+const usersRouter = require('./routes/users');
+
 // Initialize Express app
 const app = express();
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', 'layout');   
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
