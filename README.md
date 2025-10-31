@@ -61,22 +61,7 @@ Zafeer Rahim & Taylor Showalter
 ```
 To verify the new interactive behavior:
 
-Start the application and do steps 1 thru 8 above
-Test Local Button
 
-Click Local Message button and Confirm the text under the button updates immediately
-
-Test Fetch Button and see
-
-Click Fetch Message button
-Confirm 3 things: The text updates. The browser’s Network tab 
-logs a request to GET /hello. The server responds with 
-JSON containing message
-
-Direct Route Test
-
-Visit:http://localhost:3000/hello
-Confirm a JSON response is displayed in the browser
 
 ```
 
