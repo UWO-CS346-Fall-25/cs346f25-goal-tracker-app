@@ -22,7 +22,7 @@ const router = express.Router();
 const indexController = require('../controllers/indexController');
 
 // Define routes
- router.get('/', indexController.getHome);
+router.get('/', indexController.getHome);
 router.get('/', indexController.getHome);
 router.get('/about', indexController.getAbout);
 router.get('/dashboard', indexController.getDashboard);

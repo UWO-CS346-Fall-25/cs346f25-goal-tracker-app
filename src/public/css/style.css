@@ -28,7 +28,7 @@
   --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Reset/Base Styles */
+/* Reset/Base Styles 💾 🏁 🎉*/
 * {
   margin: 0;
   padding: 0;
@@ -43,7 +43,7 @@ body {
 }
 
 a {
-  color: var(--primary-color);
+  color: black;
   text-decoration: none;
 }
 
@@ -282,7 +282,7 @@ main {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   background-color: var(--primary-color);
-  color: white;
+  color: black;
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -292,6 +292,7 @@ main {
 
 .btn:hover {
   background-color: #0056b3;
+  color:white;
   text-decoration: none;
 }
 
@@ -360,7 +361,7 @@ footer {
   display:flex; align-items:center; gap:1.25rem;
   list-style:none; margin:0; padding:.75rem 1rem;
 }
-.page-nav__links a { color:#1c1f23; text-decoration:none; font-weight:600; }
+.page-nav__links a { color: black; text-decoration:none; font-weight:600; }
 .page-nav__links a:hover { text-decoration:underline; }
 
 /* Small minimal chips for CTAs in nav */

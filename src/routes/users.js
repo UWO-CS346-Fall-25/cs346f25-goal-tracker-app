@@ -108,4 +108,13 @@ router.get('/profile', requireAuth, (req, res) => {
     });
 });
 
+router.get('/dashboard', requireAuth, (req, res) => {
+    const csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
+    res.render('dashboard', {
+      title: 'Dashboard',
+      user: req.session.user,
+      csrfToken,
+    });
+  });
+
 module.exports = router;
