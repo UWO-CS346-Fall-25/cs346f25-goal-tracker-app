@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-
+const goals = require('../controllers/goalController');
+/*
 const goals = [];
 let nextId = 1;
 
 const sanitize = (s) => (typeof s === 'string' ? s.trim() : '');
 const findById = (id) => goals.find((g) => String(g.id) === String(id));
+
 
 // list all goals
 router.get('/', (req, res) => {
@@ -14,7 +16,8 @@ router.get('/', (req, res) => {
     goals,
   });
 });
-
+*/
+/*
 // new goal form
 router.get('/new', (req, res) => {
   res.render('goals/new', {
@@ -22,7 +25,7 @@ router.get('/new', (req, res) => {
     goal: { title: '', description: '', targetDate: '' },
     errors: {},
   });
-});
+});*
 
 router.post('/', (req, res) => {
   const title = sanitize(req.body.title);
@@ -140,5 +143,28 @@ router.post('/:id/delete', (req, res) => {
   goals.splice(idx, 1);
   res.redirect('/goals');
 });
+*/
+router.get('/', goals.list);
+
+router.get('/new', goals.newForm);
+router.post('/', goals.validate, goals.create);
+
+router.get('/new', goals.newForm);
+router.post('/', goals.validate, goals.create);
+
+router.get('/:id', goals.show);
+
+router.get('/:id/edit', goals.editForm);
+
+router.post('/:id', goals.validate, goals.update);
+router.post('/:id/edit', goals.validate, goals.update);
+
+router.post('/:id/delete', goals.destroy);
+
+router.post('/:id/milestones', goals.postMilestone);
+router.post('/:id/logs', goals.postLog);
+
+router.post('/', goalController.validate, goalController.create);
+
 
 module.exports = router;

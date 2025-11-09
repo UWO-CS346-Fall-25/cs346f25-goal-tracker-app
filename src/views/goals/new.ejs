@@ -1,22 +1,35 @@
 <section class="getting-started">
   <h2>Create a Goal</h2>
+  
+  <% 
+    const errs = Array.isArray(errors) ? errors : [];
+    const err = {};
+    errs.forEach(e => err[e.path || e.param] = e.msg);
+    const g = (typeof goal === 'object' && goal) ? goal : {};
+  %>
 
   <form action="/goals" method="POST" data-validate>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
     <div class="form-group">
       <label for="title">Title*</label>
-      <input id="title" name="title" required maxlength="200" />
+      <input id="title" name="title" required maxlength="200" 
+      value="<%= 'title' in g ? g.title : '' %>"
+      aria-invalid="<%= err.title ? 'true' : 'false' %>">
+      <% if (err.title) { %><small class="error"><%= err.title %></small><% } %>
     </div>
 
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea id="description" name="description" rows="4"></textarea>
+      <textarea id="description" name="description" rows="4"><%= ('description' in g) ? g.description : '' %></textarea>
     </div>
 
     <div class="form-group">
-      <label for="target_date">Target Date</label>
-      <input id="target_date" name="target_date" type="date" />
+      <label for="targetDate">Target Date</label>
+      <input id="targetDate" name="targetDate" type="date"
+      value="<%= ('targetDate' in g) ? g.targetDate : '' %>"
+        aria-invalid="<%= err.targetDate ? 'true' : 'false' %>">
+      <% if (err.targetDate) { %><small class="error"><%= err.targetDate %></small><% } %>
     </div>
 
     <button class="btn" type="submit">Create</button>
