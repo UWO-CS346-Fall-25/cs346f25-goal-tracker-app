@@ -28,13 +28,14 @@
   });
 
   function highlightActiveNav() {
-    var links = document.querySelectorAll('#mainNav a[data-path], .nav-links a[data-path]');
+    var links = document.querySelectorAll(
+      '#mainNav a[data-path], .nav-links a[data-path]'
+    );
     var path = (location.pathname || '/').replace(/\/+$/, '') || '/';
     links.forEach(function (a) {
       if (a.getAttribute('data-path') === path) a.classList.add('active');
     });
   }
-
 
   /**
    * Initialize form validation
@@ -58,8 +59,13 @@
    */
   function validateForm(form) {
     var isValid = true;
-    form.querySelectorAll('.error-message').forEach(function (n) { n.remove(); });
-    form.querySelectorAll('.error').forEach(function (n) { n.classList.remove('error'); n.style.borderColor = ''; });
+    form.querySelectorAll('.error-message').forEach(function (n) {
+      n.remove();
+    });
+    form.querySelectorAll('.error').forEach(function (n) {
+      n.classList.remove('error');
+      n.style.borderColor = '';
+    });
 
     var required = form.querySelectorAll('[required]');
     required.forEach(function (field) {
@@ -143,30 +149,28 @@
     });
 
     //  Your Button Interactivity
-    //  Local DOM 
-    const btnLocal = document.getElementById("btnLocal");
-    const output1 = document.getElementById("output1");
+    //  Local DOM
+    const btnLocal = document.getElementById('btnLocal');
+    const output1 = document.getElementById('output1');
 
     if (btnLocal && output1) {
-      btnLocal.addEventListener("click", () => {
-        output1.textContent = "You just clicked the local button!";
+      btnLocal.addEventListener('click', () => {
+        output1.textContent = 'You just clicked the local button!';
       });
     }
 
-    // Fetch() 
-    const btnFetch = document.getElementById("btnFetch");
-    const output2 = document.getElementById("output2");
+    // Fetch()
+    const btnFetch = document.getElementById('btnFetch');
+    const output2 = document.getElementById('output2');
 
     if (btnFetch && output2) {
-      btnFetch.addEventListener("click", async () => {
-        const res = await fetch("/hello");
+      btnFetch.addEventListener('click', async () => {
+        const res = await fetch('/hello');
         const data = await res.json();
         output2.textContent = data.message;
       });
     }
-
   }
-
 
   /**
    * Make an AJAX request
@@ -239,5 +243,5 @@
       notification.style.opacity = '0';
       setTimeout(() => notification.remove(), 300);
     }, 3000);
-  };
+  }
 })();

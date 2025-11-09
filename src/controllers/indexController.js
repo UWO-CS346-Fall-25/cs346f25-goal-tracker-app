@@ -40,11 +40,31 @@ function renderPage(res, view, locals = {}, req) {
 exports.getHome = async (req, res, next) => {
   try {
     const features = [
-      { icon: '👤', title: 'Accounts & Profiles', copy: 'Sign up, log in, manage your profile.' },
-      { icon: '🎯', title: 'Goals (CRUD)', copy: 'Create, update, archive goals like “Run 5k” or “Save $500”.' },
-      { icon: '🧩', title: 'Milestones', copy: 'Break big goals into steps with due dates and completion toggles.' },
-      { icon: '📒', title: 'Progress Logs', copy: 'Add dated notes and optional numeric values.' },
-      { icon: '📈', title: 'Visualizations', copy: 'Charts to see completion over time.' },
+      {
+        icon: '👤',
+        title: 'Accounts & Profiles',
+        copy: 'Sign up, log in, manage your profile.',
+      },
+      {
+        icon: '🎯',
+        title: 'Goals (CRUD)',
+        copy: 'Create, update, archive goals like “Run 5k” or “Save $500”.',
+      },
+      {
+        icon: '🚩',
+        title: 'Milestones',
+        copy: 'Break big goals into steps with due dates and completion toggles.',
+      },
+      {
+        icon: '📒',
+        title: 'Progress Logs',
+        copy: 'Add dated notes and optional numeric values.',
+      },
+      {
+        icon: '📈',
+        title: 'Visualizations',
+        copy: 'Charts to see completion over time.',
+      },
     ];
     renderPage(res, 'index', { title: 'Home', features }, req);
   } catch (error) {
@@ -68,4 +88,4 @@ exports.getDashboard = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};

@@ -16,20 +16,18 @@ const session = require('express-session');
 const csrf = require('csurf');
 const expressLayouts = require('express-ejs-layouts');
 
-
 //routers
 const indexRouter = require('./routes/index');
 const goalsRouter = require('./routes/goals');
 const usersRouter = require('./routes/users');
 
 // Initialize Express app
-const app = express();  
+const app = express();
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
   app.set('trust proxy', 1);
 }
-
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
@@ -73,7 +71,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', 
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24,
@@ -87,14 +85,18 @@ app.use(csrfProtection);
 
 // Make CSRF token available to all views
 app.use((req, res, next) => {
-  res.locals.csrfToken = (typeof req.csrfToken === 'function') ? req.csrfToken() : '';
+  res.locals.csrfToken =
+    typeof req.csrfToken === 'function' ? req.csrfToken() : '';
   res.locals.user = req.session.user || null;
   next();
 });
 
 if (app.get('env') === 'development') {
   app.set('view cache', false);
-  app.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+  app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
 }
 
 app.use('/', indexRouter);
@@ -107,13 +109,13 @@ app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN') {
     return res.status(403).render('error', {
       title: 'Invalid CSRF token',
-      message: 'Your form session has expired or the CSRF token was invalid. Please try again.',
+      message:
+        'Your form session has expired or the CSRF token was invalid. Please try again.',
       error: { status: 403 },
     });
   }
   return next(err);
 });
-
 
 // 404 handler
 app.use((req, res) => {

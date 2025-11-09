@@ -22,7 +22,7 @@ const router = express.Router();
 const indexController = require('../controllers/indexController');
 
 // Define routes
- router.get('/', indexController.getHome);
+router.get('/', indexController.getHome);
 router.get('/', indexController.getHome);
 router.get('/about', indexController.getAbout);
 router.get('/dashboard', indexController.getDashboard);
@@ -35,7 +35,9 @@ router.get('/', (req, res) => {
 // GET /hello  -> used by fetch()
 router.get('/hello', (req, res) => {
   const name = (req.query.name || 'there').trim();
-  res.json({ message: `Hello from index route, ${name} this test button will probabbly be used for something like logging in later!` });
+  res.json({
+    message: `Hello from index route, ${name} this test button will probabbly be used for something like logging in later!`,
+  });
 });
 
 router.get('/about', (req, res) => {
@@ -48,14 +50,18 @@ router.get('/dashboard', (req, res) => {
     title: 'Dashboard',
     user: { username: 'Zafeer' },
     stats: { totalGoals: 3, activeMilestones: 7, logsThisWeek: 2 },
-    chart: { labels: ['Mon','Tue','Wed','Thu','Fri'], values: [10,20,40,60,70] }
+    chart: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+      values: [10, 20, 40, 60, 70],
+    },
   });
 });
 
 // demo JSON endpoint for client interactivity
 router.get('/hello', (_req, res) => {
-    res.json({ message: `Hello from the server @ ${new Date().toLocaleTimeString()}` });
+  res.json({
+    message: `Hello from the server @ ${new Date().toLocaleTimeString()}`,
   });
-  
+});
 
 module.exports = router;
