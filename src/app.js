@@ -15,21 +15,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const csrf = require('csurf');
 const expressLayouts = require('express-ejs-layouts');
-const supabase = require('./models/db');
-
-/*
-const { createClient } = require('@supabase/supabase-js');
-const supabaseUrl = (process.env.SUPABASE_URL || '').trim();
-const supabaseAnon = (process.env.SUPABASE_ANON_KEY || '').trim();
-if (!supabaseUrl || !supabaseAnon) {
-  console.error('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env at project root.');
-  throw new Error('Supabase env vars are required');
-}
-const supabase = createClient(                              
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-*/
+const { supabase } = require('./models/db');
 
 //routers
 const indexRouter = require('./routes/index');
@@ -47,7 +33,7 @@ if (process.env.TRUST_PROXY === '1') {
  
 const supabaseOrigin = (() => {                
   try { return new URL(process.env.SUPABASE_URL).origin; } catch { return null; }
-})();
+})(); //This seems like different convention from from what was in the requirements
 
 // Security middleware - Helmet
 app.use(
@@ -171,4 +157,3 @@ app.use((err, req, res, _next) => {
 });
 
 module.exports = app;
-//module.exports.supabase = supabase;

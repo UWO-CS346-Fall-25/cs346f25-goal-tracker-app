@@ -71,4 +71,4 @@ if (!url || !anon) {
 }
 
 const supabase = createClient(url, anon);
-module.exports = supabase;
+module.exports =  supabase ;

@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 router.get('/new', (req, res) => {
   res.render('goals/new', {
     title: 'New Goal',
-    goal: { title: '', description: '', targetDate: '' },
+    goal: { title: '', description: '', due: '' },
     errors: {},
   });
 });*
@@ -30,18 +30,18 @@ router.get('/new', (req, res) => {
 router.post('/', (req, res) => {
   const title = sanitize(req.body.title);
   const description = sanitize(req.body.description);
-  const targetDate = sanitize(req.body.targetDate);
+  const due = sanitize(req.body.due);
 
   const errors = {};
   if (!title) errors.title = 'Title is required';
-  if (targetDate && !/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
-    errors.targetDate = 'Use YYYY-MM-DD format';
+  if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) {
+    errors.due = 'Use YYYY-MM-DD format';
   }
 
   if (Object.keys(errors).length) {
     return res.status(422).render('goals/new', {
       title: 'New Goal',
-      goal: { title, description, targetDate },
+      goal: { title, description, due },
       errors,
     });
   }
@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
     id: nextId++,
     title,
     description,
-    targetDate,
+    due,
     milestones: [],
     logs: [],
   };
@@ -107,25 +107,25 @@ router.post('/:id/edit', (req, res) => {
 
   const title = sanitize(req.body.title);
   const description = sanitize(req.body.description);
-  const targetDate = sanitize(req.body.targetDate);
+  const due = sanitize(req.body.due);
 
   const errors = {};
   if (!title) errors.title = 'Title is required';
-  if (targetDate && !/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
-    errors.targetDate = 'Use YYYY-MM-DD format';
+  if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) {
+    errors.due = 'Use YYYY-MM-DD format';
   }
 
   if (Object.keys(errors).length) {
     return res.status(422).render('goals/edit', {
       title: `Edit: ${goal.title || 'Goal'}`,
-      goal: { ...goal, title, description, targetDate },
+      goal: { ...goal, title, description, due },
       errors,
     });
   }
 
   goal.title = title;
   goal.description = description;
-  goal.targetDate = targetDate;
+  goal.due = due;
 
   res.redirect(`/goals/${goal.id}`);
 });
@@ -163,8 +163,6 @@ router.post('/:id/delete', goals.destroy);
 
 router.post('/:id/milestones', goals.postMilestone);
 router.post('/:id/logs', goals.postLog);
-
-router.post('/', goalController.validate, goalController.create);
 
 
 module.exports = router;

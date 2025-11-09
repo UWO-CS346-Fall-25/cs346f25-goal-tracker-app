@@ -10,9 +10,10 @@
     <div class="feature-grid">
       <% goals.forEach(g => { %>
         <div class="feature">
-          <h3><a href="/goals/<%= g.id %>"><%= g.title %></a></h3>
+          
+          <h3><a href="/goals/<%= g.id %>"><%= g.goalname %></a></h3>
           <p><%= g.description || 'No description' %></p>
-          <p><small>Target: <%= g.target_date || '—' %></small></p>
+          <p><small>Target: <%= g.due || '—' %></small></p>
           <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
             <a class="btn" href="/goals/<%= g.id %>">Open</a>
             <a class="btn" href="/goals/<%= g.id %>/edit">Edit</a>

@@ -25,11 +25,11 @@
     </div>
 
     <div class="form-group">
-      <label for="targetDate">Target Date</label>
-      <input id="targetDate" name="targetDate" type="date"
-      value="<%= ('targetDate' in g) ? g.targetDate : '' %>"
-        aria-invalid="<%= err.targetDate ? 'true' : 'false' %>">
-      <% if (err.targetDate) { %><small class="error"><%= err.targetDate %></small><% } %>
+      <label for="due">Target Date</label>
+      <input id="due" name="due" type="date"
+      value="<%= ('due' in g) ? g.due : '' %>"
+        aria-invalid="<%= err.due ? 'true' : 'false' %>">
+      <% if (err.due) { %><small class="error"><%= err.due %></small><% } %>
     </div>
 
     <button class="btn" type="submit">Create</button>

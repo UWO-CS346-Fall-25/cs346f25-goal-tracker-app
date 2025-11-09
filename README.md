@@ -23,34 +23,34 @@ Zafeer Rahim & Taylor Showalter
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm i
    ```
 
-3. **Set up environment variables, this step to 7 are skippable till the actual database is setup(skip no database yet)**
+3. **Set up environment variables, this step to 7 are skippable till the actual database is setup**
    ```bash
    cp .env.example .env
    # Edit .env with your database credentials
    ```
 
-4. **Set up PostgreSQL database(skip no database yet)**
+4. **Set up PostgreSQL database**
    ```bash
    # Create database (adjust credentials as needed)
    createdb your_database_name
    ```
 
-5. **Run migrations(skip not done yet)**
+5. **Run migrations(skip)**
    ```bash
    npm run migrate
    ```
 
-6. **Seed database (optional)**
+6. **Seed database (skip)**
    ```bash
    npm run seed
    ```
 
 7. **Start the application**
    ```bash
-   npm run dev
+   npm start
    ```
 
 8. **Open your browser**
@@ -59,9 +59,9 @@ Zafeer Rahim & Taylor Showalter
    ```
 9. **Verification for this week**
 ```
-To verify the new interactive behavior:
-
-
+go to dashboard
+new goal button and create a new goal
+look at your new goals by clicking the goal button on dashboard
 
 ```
 
