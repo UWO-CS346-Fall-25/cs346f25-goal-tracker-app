@@ -21,49 +21,58 @@ class User {
    * @returns {Promise<Array>} Array of users
    */
   static async findAll() {
-    const query =
-      'SELECT id, username, email, created_at FROM users ORDER BY created_at DESC';
-    const result = await db.query(query);
-    return result.rows;
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, email, username:display_name, created_at')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 
   /**
-   * Find user by ID
-   * @param {number} id - User ID
+   * Find user by email
+   * @param {string} email - email
    * @returns {Promise<object|null>} User object or null
    */
   static async findById(id) {
-    const query =
-      'SELECT id, username, email, created_at FROM users WHERE id = $1';
-    const result = await db.query(query, [id]);
-    return result.rows[0] || null;
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, email, username:display_name, created_at, updated_at')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data || null;
   }
 
-  /**
+  /*
    * Find user by email (including password for authentication)
    * @param {string} email - User email
    * @returns {Promise<object|null>} User object or null
    */
   static async findByEmail(email) {
-    const query = 'SELECT * FROM users WHERE email = $1';
-    const result = await db.query(query, [email]);
-    return result.rows[0] || null;
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, email, username:display_name, created_at, updated_at')
+      .eq('email', email)
+      .maybeSingle();
+    if (error) throw error;
+    return data || null;
   }
+  
 
   /**
    * Create a new user
-   * @param {object} userData - User data { username, email, password }
+   * @param {{ email:string, passwordHash:string, displayName:string }} userData - User data { username, email, password }
    * @returns {Promise<object>} Created user object
    */
-  static async create(userData) {
-    const { username, email, password } = userData;
-    const query = `
-      INSERT INTO users (username, email, password)
-      VALUES ($1, $2, $3)
-      RETURNING id, username, email, created_at
-    `;
-    const result = await db.query(query, [username, email, password]);
-    return result.rows[0];
+  static async create({ id, email, username }) {
+    const { data, error } = await supabase
+    .from('users')
+    .insert({ id, email, display_name: username })
+    .select('id, email, username:display_name, created_at')
+    .single();
+  if (error) throw error;
+  return data;
   }
 
   /**
@@ -72,16 +81,19 @@ class User {
    * @param {object} userData - User data to update
    * @returns {Promise<object>} Updated user object
    */
-  static async update(id, userData) {
-    const { username, email } = userData;
-    const query = `
-      UPDATE users
-      SET username = $1, email = $2, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $3
-      RETURNING id, username, email, created_at, updated_at
-    `;
-    const result = await db.query(query, [username, email, id]);
-    return result.rows[0];
+  static async updateProfile(id, { email, username } = {}) {
+    const patch = {};
+    if (email !== undefined) patch.email = email;
+    if (username !== undefined) patch.display_name = username;
+
+    const { data, error } = await supabase
+      .from('users')
+      .update(patch)
+      .eq('id', id)
+      .select('id, email, username:display_name, created_at, updated_at')
+      .single();
+    if (error) throw error;
+    return data;
   }
 
   /**
@@ -89,10 +101,10 @@ class User {
    * @param {number} id - User ID
    * @returns {Promise<boolean>} True if deleted, false otherwise
    */
-  static async delete(id) {
-    const query = 'DELETE FROM users WHERE id = $1';
-    const result = await db.query(query, [id]);
-    return result.rowCount > 0;
+  static async deleteProfile(id) {
+    const { error } = await supabase.from('users').delete().eq('id', id);
+    if (error) throw error;
+    return true;
   }
 }
 

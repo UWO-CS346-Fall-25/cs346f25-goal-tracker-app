@@ -24,20 +24,47 @@
 
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/userController');
 
 function requireGuest(req, res, next) {
-  if (req.session?.user) return res.redirect('/dashboard');
+  if (req.session?.user?.email) return res.redirect('/dashboard');
   next();
 }
 
 function requireAuth(req, res, next) {
-  if (!req.session?.user) {
+  if (!req.session?.user?.email) {
     // remember where to go after login
     req.session.returnTo = req.originalUrl;
     return res.redirect('/users/login');
   }
   next();
 }
+
+router.get('/login', requireGuest, userController.getLogin);
+router.post('/login', requireGuest, userController.postLogin);
+
+router.get('/register', requireGuest, userController.getRegister);
+router.post('/register', requireGuest, userController.postRegister);
+
+router.post('/logout', requireAuth, userController.postLogout);
+
+router.get('/profile', requireAuth, (req, res) => {
+  res.render('profile', {
+    title: 'Your Profile',
+    user: req.session.user, 
+  });
+});
+
+router.get('/dashboard', requireAuth, (req, res) => {
+  const csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
+  res.render('dashboard', {
+    title: 'Dashboard',
+    user: req.session.user,
+    csrfToken,
+  });
+});
+
+/*
 
 router.get('/login', requireGuest, (req, res) => {
   res.render('users/login', {
@@ -122,5 +149,5 @@ router.get('/dashboard', requireAuth, (req, res) => {
     csrfToken,
   });
 });
-
+*/
 module.exports = router;
