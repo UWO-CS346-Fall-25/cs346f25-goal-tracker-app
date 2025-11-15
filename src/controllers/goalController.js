@@ -1,9 +1,11 @@
 const { body, validationResult } = require('express-validator');
-const Goal = require('../models/Goal');
+const Goal = require('../models/goals');
 
 exports.list = async (req, res, next) => {
   try {
-    const goals = await Goal.allByUser(req.session.user.id);
+    const userId = req.session.user?.id;
+    if (!userId) return res.redirect('/users/login');
+    const goals = await Goal.allByUser();
     res.render('goals/index', { title: 'Goals', goals });
   } catch (e) {
     next(e);
@@ -12,6 +14,8 @@ exports.list = async (req, res, next) => {
 
 exports.show = async (req, res, next) => {
   try {
+    const userId = req.session.user?.id;
+    if (!userId) return res.redirect('/users/login');
     const goal = await Goal.findById(req.params.id, req.session.user.id);
     if (!goal)
       return res
@@ -21,17 +25,23 @@ exports.show = async (req, res, next) => {
           message: 'Goal not found',
           error: {},
         });
-    res.render('goals/show', { title: goal.title, goal });
+    res.render('goals/show', {
+      title: goal.goalname || 'Goal',
+      goal,
+      milestones: [],                 
+      logs: []        
+     });
   } catch (e) {
     next(e);
   }
 };
 
-exports.newForm = (req, res) => res.render('goals/new', { title: 'New Goal' });
+exports.newForm = (req, res) => res.render('goals/new', { title: 'New Goal', errors:[] });
 
 exports.validate = [
   body('title').trim().isLength({ min: 1 }).withMessage('Title required'),
   body('description').trim().escape(),
+  //body('due').optional({ checkFalsy: true }).isISO8601().toDate(),
   body('targetDate').optional({ checkFalsy: true }).isISO8601().toDate(),
 ];
 
@@ -40,17 +50,23 @@ exports.create = async (req, res, next) => {
   if (!errors.isEmpty())
     return res
       .status(422)
-      .render('goals/new', { title: 'New Goal', errors: errors.array() });
+      .render('goals/new', { title: 'New Goal', errors: errors.array(),
+      goal: { title: req.body.title, description: req.body.description, targetDate: req.body.targetDate },
+    });
 
   try {
+    //const userId = req.session.user?.id;
+    //if (!userId) throw new Error('No user in session');
+
     const { title, description, targetDate } = req.body;
-    const { id } = await Goal.create({
-      userId: req.session.user.id,
-      title,
-      description,
-      targetDate,
-    });
-    res.redirect(`/goals/${id}`);
+    //const row = await Goal.create({
+    //  title,
+    //  description,
+    //  due: targetDate || null,
+    //});
+    const created = await Goal.create({ title, description, targetDate });
+    const { id } = created;
+    return res.redirect(`/goals/${id}`);
   } catch (e) {
     next(e);
   }
@@ -88,9 +104,9 @@ exports.update = async (req, res, next) => {
     await Goal.update(req.params.id, req.session.user.id, {
       title: req.body.title,
       description: req.body.description,
-      targetDate: req.body.targetDate,
-      progress: Number(req.body.progress ?? 0),
-      archived: !!req.body.archived,
+      due: req.body.targetDate || null,
+      //progress: Number(req.body.progress ?? 0),
+      //archived: !!req.body.archived,
     });
     res.redirect(`/goals/${req.params.id}`);
   } catch (e) {

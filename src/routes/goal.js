@@ -12,7 +12,7 @@ function clampProgress(n) {
 }
 
 module.exports = {
-  async allByUser(userId) {
+  async allByUser(id) {
     const { rows } = await db.query(
       `SELECT id, title, description, target_date, progress, archived, created_at
        FROM goals WHERE user_id = $1 ORDER BY created_at DESC`,
@@ -30,11 +30,11 @@ module.exports = {
     return rows[0];
   },
 
-  async create({ userId, title, description, targetDate }) {
+  async create({ id, goalname, description, due }) {
     const { rows } = await db.query(
       `INSERT INTO goals (user_id, title, description, target_date)
        VALUES ($1, $2, $3, $4) RETURNING id`,
-      [userId, title, description, targetDate || null]
+      [id, goalname, description, due || null]
     );
     return rows[0];
   },
@@ -42,7 +42,7 @@ module.exports = {
   async update(
     id,
     userId,
-    { title, description, targetDate, progress, archived }
+    { title, description, due, progress, archived }
   ) {
     await db.query(
       `UPDATE goals
@@ -51,9 +51,9 @@ module.exports = {
       [
         title,
         description,
-        targetDate || null,
+        due || null,
         progress ?? 0,
-        archived ?? false,
+        //archived ?? false,
         id,
         userId,
       ]

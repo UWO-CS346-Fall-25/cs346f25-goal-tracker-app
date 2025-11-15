@@ -9,17 +9,18 @@
  * const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
  */
 
-const { Pool } = require('pg');
+/*const { Pool } = require('pg');
 
 // Create connection pool
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'your_database_name',
-  user: process.env.DB_USER || 'your_database_user',
-  password: process.env.DB_PASSWORD || 'your_database_password',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 5432),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  ssl: { require: true, rejectUnauthorized: false },
   // Connection pool settings
-  max: 20, // Maximum number of clients in the pool
+  max: 15, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection cannot be established
 });
@@ -40,6 +41,7 @@ pool.on('error', (err) => {
  * @param {Array} params - Query parameters (for parameterized queries)
  * @returns {Promise<object>} Query result
  */
+/*
 const query = (text, params) => {
   return pool.query(text, params);
 };
@@ -48,6 +50,7 @@ const query = (text, params) => {
  * Get a client from the pool for transactions
  * @returns {Promise<object>} Database client
  */
+/*
 const getClient = () => {
   return pool.connect();
 };
@@ -57,3 +60,15 @@ module.exports = {
   getClient,
   pool,
 };
+*/
+const { createClient } = require('@supabase/supabase-js');
+
+const url  = (process.env.SUPABASE_URL || '').trim();
+const anon = (process.env.SUPABASE_ANON_KEY || '').trim();
+
+if (!url || !anon) {
+  throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+}
+
+const supabase = createClient(url, anon);
+module.exports =  supabase ;

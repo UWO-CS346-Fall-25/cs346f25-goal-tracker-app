@@ -8,13 +8,14 @@
  * - Routes
  * - Error handling
  */
-
 const express = require('express');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const helmet = require('helmet');
 const session = require('express-session');
 const csrf = require('csurf');
 const expressLayouts = require('express-ejs-layouts');
+const { supabase } = require('./models/db');
 
 //routers
 const indexRouter = require('./routes/index');
@@ -23,16 +24,16 @@ const usersRouter = require('./routes/users');
 
 // Initialize Express app
 const app = express();
+app.locals.supabase = supabase;
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
   app.set('trust proxy', 1);
 }
-
-app.disable('x-powered-by');
-if (process.env.TRUST_PROXY === '1') {
-  app.set('trust proxy', 1);
-}
+ 
+const supabaseOrigin = (() => {                
+  try { return new URL(process.env.SUPABASE_URL).origin; } catch { return null; }
+})(); //This seems like different convention from from what was in the requirements
 
 // Security middleware - Helmet
 app.use(
@@ -44,7 +45,7 @@ app.use(
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", 'data:', 'https:'],
         fontSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"],
+        connectSrc: ["'self'", ...(supabaseOrigin ? [supabaseOrigin] : []), 'https://*.supabase.co', 'wss://*.supabase.co'],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         frameAncestors: ["'self'"],
@@ -78,7 +79,16 @@ app.use(
     },
   })
 );
-
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, _res, next) => {
+    if (!req.session.user) {
+      // If your goals.user_id is BIGINT, keep id as a number.
+      // If it's UUID, put a UUID string here AND in your table.
+      req.session.user = { id: 1, email: 'demo@goaltracker.local' };
+    }
+    next();
+  });
+}
 // CSRF protection
 const csrfProtection = csrf({ cookie: false });
 app.use(csrfProtection);
