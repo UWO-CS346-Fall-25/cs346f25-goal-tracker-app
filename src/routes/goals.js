@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const goals = require('../controllers/goalController');
+const { requireAuth } = require('../middleware/auth');
+
 /*
 const goals = [];
 let nextId = 1;
@@ -144,10 +146,9 @@ router.post('/:id/delete', (req, res) => {
   res.redirect('/goals');
 });
 */
-router.get('/', goals.list);
+router.use(requireAuth);
 
-router.get('/new', goals.newForm);
-router.post('/', goals.validate, goals.create);
+router.get('/', goals.list);
 
 router.get('/new', goals.newForm);
 router.post('/', goals.validate, goals.create);
@@ -155,7 +156,6 @@ router.post('/', goals.validate, goals.create);
 router.get('/:id', goals.show);
 
 router.get('/:id/edit', goals.editForm);
-
 router.post('/:id', goals.validate, goals.update);
 router.post('/:id/edit', goals.validate, goals.update);
 
@@ -163,6 +163,5 @@ router.post('/:id/delete', goals.destroy);
 
 router.post('/:id/milestones', goals.postMilestone);
 router.post('/:id/logs', goals.postLog);
-
 
 module.exports = router;

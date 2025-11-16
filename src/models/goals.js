@@ -1,5 +1,5 @@
 // src/models/Goal.js
-const supabase = require('./db');
+const { supabase }  = require('./supabaseClient');
 const TABLE = 'newgoal';
 
 exports.allByUser = async () => {

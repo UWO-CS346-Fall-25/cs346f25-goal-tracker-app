@@ -3,8 +3,9 @@ const Goal = require('../models/goals');
 
 exports.list = async (req, res, next) => {
   try {
-    const userId = req.session.user?.id;
-    if (!userId) return res.redirect('/users/login');
+    const userEmail = req.session.user?.email;
+    if (!userEmail) return res.redirect('/users/login');
+    
     const goals = await Goal.allByUser();
     res.render('goals/index', { title: 'Goals', goals });
   } catch (e) {

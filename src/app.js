@@ -11,16 +11,18 @@
 const express = require('express');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const helmet = require('helmet');
 const session = require('express-session');
 const csrf = require('csurf');
 const expressLayouts = require('express-ejs-layouts');
-const { supabase } = require('./models/db');
 
 //routers
 const indexRouter = require('./routes/index');
 const goalsRouter = require('./routes/goals');
 const usersRouter = require('./routes/users');
+
+const { supabase } = require('./models/supabaseClient');
 
 // Initialize Express app
 const app = express();
@@ -79,6 +81,7 @@ app.use(
     },
   })
 );
+/*
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, _res, next) => {
     if (!req.session.user) {
@@ -88,7 +91,7 @@ if (process.env.NODE_ENV !== 'production') {
     }
     next();
   });
-}
+}*/
 // CSRF protection
 const csrfProtection = csrf({ cookie: false });
 app.use(csrfProtection);
