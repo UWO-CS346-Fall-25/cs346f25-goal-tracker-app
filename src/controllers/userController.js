@@ -149,7 +149,7 @@ exports.postLogout = (req, res) => {
     if (err) {
       console.error('Error destroying session:', err);
     }
-    res.redirect('/');
+    res.redirect('/users/login');
   });
 };
 
