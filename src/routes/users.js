@@ -27,12 +27,12 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 function requireGuest(req, res, next) {
-  if (req.session?.user?.email) return res.redirect('/dashboard');
+  if (req.session?.user) return res.redirect('/dashboard');
   next();
 }
 
 function requireAuth(req, res, next) {
-  if (!req.session?.user?.email) {
+  if (!req.session?.user) {
     // remember where to go after login
     req.session.returnTo = req.originalUrl;
     return res.redirect('/users/login');
@@ -40,32 +40,36 @@ function requireAuth(req, res, next) {
   next();
 }
 
-router.get('/login', requireGuest, userController.getLogin);
-router.post('/login', requireGuest, userController.postLogin);
 
+// Register
 router.get('/register', requireGuest, userController.getRegister);
 router.post('/register', requireGuest, userController.postRegister);
 
+// Login
+router.get('/login', requireGuest, userController.getLogin);
+router.post('/login', requireGuest, userController.postLogin);
+
+// Logout
 router.post('/logout', requireAuth, userController.postLogout);
 
+// Profile (example protected page)
 router.get('/profile', requireAuth, (req, res) => {
-  res.render('profile', {
+  res.render('users/profile', { // ensure this path matches your views
     title: 'Your Profile',
-    user: req.session.user, 
+    user: req.session.user
   });
 });
 
+// Dashboard (protected)
 router.get('/dashboard', requireAuth, (req, res) => {
   const csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
-  res.render('dashboard', {
+  res.render('users/dashboard', {
     title: 'Dashboard',
     user: req.session.user,
-    csrfToken,
+    csrfToken
   });
 });
-
 /*
-
 router.get('/login', requireGuest, (req, res) => {
   res.render('users/login', {
     title: 'Login',

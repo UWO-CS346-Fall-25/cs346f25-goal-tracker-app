@@ -13,7 +13,7 @@
  * - delete(id): Delete a user
  */
 
-const db = require('./db');
+const { supabase } = require('./supabaseClient');
 
 class User {
   /**
@@ -23,28 +23,28 @@ class User {
   static async findAll() {
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, username:display_name, created_at')
+      .select('id, email, display_name, created_at')
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   }
 
   /**
-   * Find user by email
-   * @param {string} email - email
+   * Find user by ID
+   * @param {number} id - User ID
    * @returns {Promise<object|null>} User object or null
    */
   static async findById(id) {
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, username:display_name, created_at, updated_at')
+      .select('id, email, display_name, created_at, updated_at')
       .eq('id', id)
       .maybeSingle();
     if (error) throw error;
     return data || null;
   }
 
-  /*
+  /**
    * Find user by email (including password for authentication)
    * @param {string} email - User email
    * @returns {Promise<object|null>} User object or null
@@ -52,27 +52,26 @@ class User {
   static async findByEmail(email) {
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, username:display_name, created_at, updated_at')
+      .select('id, email, display_name, created_at, updated_at')
       .eq('email', email)
       .maybeSingle();
     if (error) throw error;
     return data || null;
   }
-  
 
   /**
    * Create a new user
-   * @param {{ email:string, passwordHash:string, displayName:string }} userData - User data { username, email, password }
+   * @param {object} userData - User data { username, email, password }
    * @returns {Promise<object>} Created user object
    */
-  static async create({ id, email, username }) {
+  static async createProfile({ id, email, username }) {
     const { data, error } = await supabase
-    .from('users')
-    .insert({ id, email, display_name: username })
-    .select('id, email, username:display_name, created_at')
-    .single();
-  if (error) throw error;
-  return data;
+      .from('users')
+      .insert({ id, email, display_name: username })
+      .select('id, email, display_name, created_at')
+      .single();
+    if (error) throw error;
+    return data;
   }
 
   /**
@@ -90,7 +89,7 @@ class User {
       .from('users')
       .update(patch)
       .eq('id', id)
-      .select('id, email, username:display_name, created_at, updated_at')
+      .select('id, email, display_name, created_at, updated_at')
       .single();
     if (error) throw error;
     return data;

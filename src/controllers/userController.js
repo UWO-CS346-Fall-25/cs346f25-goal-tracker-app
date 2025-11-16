@@ -9,11 +9,10 @@
  */
 
 // Import models
-//const bcrypt = require('bcrypt');
+// const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
-const { supabase } = require('../models/db');
+const  supabase  = require('../models/supabaseClient').supabase;
 const User = require('../models/User');
-
 
 /**
  * GET /users/register
@@ -23,6 +22,8 @@ exports.getRegister = (req, res) => {
   res.render('users/register', {
     title: 'Register',
     csrfToken: req.csrfToken(),
+    errors: [],
+    values: {},
   });
 };
 
@@ -41,41 +42,44 @@ exports.postRegister = [
 
       if (!errors.isEmpty()) {
         return res.status(400).render('users/register', {
-          title: 'Register', csrfToken: req.csrfToken(), errors: errors.array(),
-          values: { email, display_name: username }
+          title: 'Register',
+          csrfToken: req.csrfToken(),
+          errors: errors.array(),
+          values: { email, display_name: username },
         });
       }
-
+      // Supabase sign up (email confirm optional in Supabase settings)
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username } } 
+        options: { data: { username }, emailRedirectTo: 'http://localhost:3000/users/login' },
       });
       if (error) {
         return res.status(400).render('users/register', {
-          title: 'Register', csrfToken: req.csrfToken(),
-          errors: [{ msg: error.message }], values: { email, display_name: username }
+          title: 'Register',
+          csrfToken: req.csrfToken(),
+          errors: [{ msg: error.message }],
+          values: { email, display_name: username },
         });
       }
-
-      const authUser = data.user; 
-      if (!authUser) {
-        req.flash?.('info', 'Check your email to confirm your account.');
+      // If email confirmation is ON, data.user may be null until they click the link
+      if (!data.user) {
+        // Show a friendly notice and send to login
         return res.redirect('/users/login');
       }
+      // Ensure a profile row exists in public.users (id matches auth.users.id)
+      const existing = await User.findById(data.user.id);
+      if (!existing) await User.createProfile({ id: data.user.id, email, username });
 
-      const existing = await User.findById(authUser.id);
-      if (!existing) {
-        await User.createProfile({ id: authUser.id, email, username });
-      }
-
-      req.session.user = { id: authUser.id, email, display_name: username };
-      res.redirect('/dashboard');
-    } catch (err) {
-      next(err);
+      // Create our session
+      req.session.user = { id: data.user.id, email, display_name: username };
+      return req.session.save(() => res.redirect(req.session.returnTo || '/dashboard'));
+    } catch (error) {
+      next(error);
     }
   }
 ];
+
 
 /**
  * GET /users/login
@@ -85,6 +89,8 @@ exports.getLogin = (req, res) => {
   res.render('users/login', {
     title: 'Login',
     csrfToken: req.csrfToken(),
+    errors: [],
+    values: {},
   });
 };
 
@@ -97,45 +103,54 @@ exports.postLogin = [
   body('password').notEmpty().withMessage('Password required'),
   async (req, res, next) => {
     try {
-      const errors = validationResult(req);
+      // const { email, password } = req.body;
       const { email, password } = req.body;
-
+      const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).render('users/login', {
-          title: 'Login', csrfToken: req.csrfToken(), errors: errors.array(), values: { email }
+          title: 'Login',
+          csrfToken: req.csrfToken(),
+          errors: errors.array(),
+          values: { email },
         });
       }
-
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error || !data.user) {
+      if (error) {
+        const message = /confirm|verified/i.test(error.message)
+          ? 'Email not confirmed. Please check your inbox.'
+          : 'Invalid email or password';
         return res.status(401).render('users/login', {
-          title: 'Login', csrfToken: req.csrfToken(),
-          errors: [{ msg: 'Invalid email or password' }], values: { email }
+          title: 'Login',
+          csrfToken: req.csrfToken(),
+          errors: [{ msg: message }],
+          values: { email },
         });
       }
-
+      // Load display name from profile (if any)
       const profile = await User.findById(data.user.id);
-      const display_name = profile?.username || profile?.display_name || data.user.user_metadata?.username || '';
+      const display_name =
+        profile?.username || profile?.display_name || data.user.user_metadata?.username || '';
 
       req.session.user = { id: data.user.id, email: data.user.email, display_name };
-   
-    res.redirect('/dashboard');
-  } catch (err) {
-    next(err);
+      return req.session.save(() => res.redirect(req.session.returnTo || '/dashboard'));
+    } catch (error) {
+      next(error);
+    }
   }
-}
 ];
+
 
 /**
  * POST /users/logout
  * Logout user
  */
-exports.postLogout = async (req, res) => {
-  try {
-    await supabase.auth.signOut().catch(() => {}); 
-  } finally {
-    req.session.destroy(() => res.redirect('/'));
-  }
+exports.postLogout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+    }
+    res.redirect('/');
+  });
 };
 
 // Add more controller methods as needed
