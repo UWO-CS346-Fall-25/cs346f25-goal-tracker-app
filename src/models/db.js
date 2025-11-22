@@ -61,14 +61,18 @@ module.exports = {
   pool,
 };
 */
-const { createClient } = require('@supabase/supabase-js');
+const { Pool } = require('pg');
 
-const url  = (process.env.SUPABASE_URL || '').trim();
-const anon = (process.env.SUPABASE_ANON_KEY || '').trim();
-
-if (!url || !anon) {
-  throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+const conn = (process.env.DATABASE_URL || '').trim();
+if (!conn) {
+  console.warn('[db] DATABASE_URL not set. Any code calling db.query will fail.');
 }
 
-const supabase = createClient(url, anon);
-module.exports =  supabase ;
+const pool = conn ? new Pool({ connectionString: conn, ssl: { rejectUnauthorized: false } }) : null;
+
+async function query(text, params) {
+  if (!pool) throw new Error('DATABASE_URL missing for db.query');
+  return pool.query(text, params);
+}
+
+module.exports = { query };  

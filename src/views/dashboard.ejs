@@ -1,5 +1,12 @@
-<h1>Dashboard</h1>
+<div class="page-header">
+  <h1>Dashboard</h1>
 
+  <% if (user) { %>
+    <p class="welcome-msg">
+      Welcome back, <%= user.display_name || user.username || user.email %>!
+    </p>
+  <% } %>
+</div>
 <%- include('partials/quick-actions', { csrfToken }) %>
 
 <section class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0;">
