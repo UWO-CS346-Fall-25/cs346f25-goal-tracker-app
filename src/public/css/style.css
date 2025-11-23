@@ -490,3 +490,35 @@ footer {
   text-align: center;
   padding: 2rem 0;
 }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  height: 160px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 0 #222;
+}
+
+.stat-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.feature.stat-card {
+  padding: 0;                 /* overlay already pads content */
+  background-color: transparent;
+}
