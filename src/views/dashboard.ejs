@@ -10,19 +10,37 @@
 <%- include('partials/quick-actions', { csrfToken }) %>
 
 <section class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0;">
-  <div class="feature">
+  
+  <div class="feature stat-card" data-bg="<%= cardPhotos?.[0]?.urls?.regular || '' %>">
+    <div class="stat-overlay">
     <h3>Total Goals</h3>
     <p><strong><%= stats?.totalGoals || 0 %></strong></p>
   </div>
-  <div class="feature">
+  </div>
+
+  <div class="feature stat-card" data-bg="<%= cardPhotos?.[1]?.urls?.regular || '' %>">
+    <div class="stat-overlay">
     <h3>Active Milestones</h3>
     <p><strong><%= stats?.activeMilestones || 0 %></strong></p>
   </div>
-  <div class="feature">
+</div>
+
+  <div class="feature stat-card" data-bg="<%= cardPhotos?.[2]?.urls?.regular || '' %>">
+    <div class="stat-overlay">
     <h3>Logs This Week</h3>
     <p><strong><%= stats?.logsThisWeek || 0 %></strong></p>
   </div>
 </section>
+</div>
+
+<script>
+  document.querySelectorAll('.stat-card').forEach(card => {
+    const bg = card.dataset.bg;
+    if (bg) {
+      card.style.backgroundImage = `url(${bg})`;
+    }
+  });
+</script>
 
 <section style="margin-top:2rem;">
   <h2>Weekly Completion</h2>

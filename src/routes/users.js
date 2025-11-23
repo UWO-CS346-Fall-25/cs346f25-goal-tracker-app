@@ -52,13 +52,16 @@ router.post('/login', requireGuest, userController.postLogin);
 // Logout
 router.post('/logout', requireAuth, userController.postLogout);
 
+/*
 // Profile (example protected page)
 router.get('/profile', requireAuth, (req, res) => {
-  res.render('users/profile', { // ensure this path matches your views
+  res.render('views/profile', { // ensure this path matches your views
     title: 'Your Profile',
     user: req.session.user
   });
 });
+*/
+router.get('/profile', userController.getProfile);
 
 // Dashboard (protected)
 router.get('/dashboard', requireAuth, (req, res) => {

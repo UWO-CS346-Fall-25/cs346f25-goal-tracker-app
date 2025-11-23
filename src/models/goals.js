@@ -14,6 +14,7 @@ exports.allByUser = async () => {
   return data ?? [];
 };
 
+
 exports.findById = async (id) => {
   let q = supabase.from(TABLE).select('*').eq('id', id).single();
   // To scope by user, add user_id filter when userId provided
