@@ -72,8 +72,24 @@ exports.getHome = async (req, res, next) => {
   }
 };
 
+/*
 exports.getAbout = (req, res) => {
   res.render('about', { title: 'About', showHero: false });
+};
+*/
+exports.getAbout = async (req, res, next) => {
+  try {
+    const photos = await getRandomPhotos(1, 'goals success motivation');
+    const aboutPhoto = photos?.[0] || null;
+
+    renderPage(res, 'about', {
+      title: 'About',
+      showHero: false,
+      aboutPhoto,
+    }, req);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const Goal = require('../models/goals');

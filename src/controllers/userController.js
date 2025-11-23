@@ -153,4 +153,8 @@ exports.postLogout = (req, res) => {
   });
 };
 
+exports.getProfile = (req, res) => {
+  if (!req.session.user) return res.redirect('/users/login');
+  res.render('profile', { title: 'Profile' });
+};
 // Add more controller methods as needed
