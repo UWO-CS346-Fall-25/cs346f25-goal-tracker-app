@@ -72,19 +72,59 @@ exports.getHome = async (req, res, next) => {
   }
 };
 
+/*
 exports.getAbout = (req, res) => {
   res.render('about', { title: 'About', showHero: false });
 };
+*/
+exports.getAbout = async (req, res, next) => {
+  try {
+    const photos = await getRandomPhotos(1, 'goals success motivation');
+    const aboutPhoto = photos?.[0] || null;
+
+    renderPage(res, 'about', {
+      title: 'About',
+      showHero: false,
+      aboutPhoto,
+    }, req);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const Goal = require('../models/goals');
+const { getRandomPhotos } = require('./apiController');
 
 exports.getDashboard = async (req, res, next) => {
+  
   try {
+    const userId = req.session.user?.id;
+    if (!userId) return res.redirect('/users/login');
+
     const stats = { totalGoals: 3, activeMilestones: 7, logsThisWeek: 2 };
+    //const totalGoals = await Goal.countByUser(userId);
+    //const activeMilestones = 0;
+    //const logsThisWeek = 0;
+
+    const photos = await getRandomPhotos(3, 'goals success motivation');
+
     const chart = {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       values: [10, 20, 35, 50, 65, 70, 80],
     };
 
-    renderPage(res, 'dashboard', { title: 'Dashboard', stats, chart }, req);
+    renderPage(
+      res,
+      'dashboard',
+      {
+        title: 'Dashboard',
+       // stats: { totalGoals, activeMilestones, logsThisWeek },
+        stats,
+        cardPhotos: photos,
+        chart,
+      },
+      req
+    );
   } catch (error) {
     next(error);
   }
