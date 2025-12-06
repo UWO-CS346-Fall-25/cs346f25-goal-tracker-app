@@ -1,0 +1,29 @@
+<section class="features">
+    <h2>Logs for <%= goal.goalname %></h2>
+  
+    <ul>
+      <% logs.forEach(l => { %>
+        <li>
+          <strong><%= l.entry_date %></strong><br>
+          <%= l.note %><br>
+  
+          <% if (l.metric_name) { %>
+            <em><%= l.metric_name %>: <%= l.metric_value %></em><br>
+          <% } %>
+  
+          <% if (l.attachments && l.attachments.length) { %>
+            <div style="margin-top:.25rem;">
+              <% l.attachments.forEach(a => { %>
+                <% if (a.mime_type.startsWith("image/")) { %>
+                  <img src="<%= a.file_path %>" style="height:80px;border-radius:6px;">
+                <% } else { %>
+                  <a href="<%= a.file_path %>" class="btn">View File</a>
+                <% } %>
+              <% }) %>
+            </div>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+  

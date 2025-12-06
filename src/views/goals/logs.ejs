@@ -1,0 +1,46 @@
+<section class="features">
+    <h2><%= goal.goalname %> – Logs</h2>
+    <p><a href="/goals/<%= goal.id %>">Back to goal</a></p>
+  
+    <h3>All logs</h3>
+    <% if (!logs || logs.length === 0) { %>
+      <p>No logs yet for this goal.</p>
+    <% } else { %>
+      <ul style="margin-left:1.25rem">
+        <% logs.forEach(l => { %>
+          <li style="margin:.5rem 0">
+            <strong><%= l.entry_date || '' %></strong>
+            — <%= l.note %>
+            <% if (l.metric_name && l.metric_value != null) { %>
+              <em> (<%= l.metric_name %>: <%= l.metric_value %>)</em>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  
+    <hr />
+  
+    <h3>Add log</h3>
+    <form action="/goals/<%= goal.id %>/logs" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label for="note">Note*</label>
+        <textarea id="note" name="note" rows="3" required></textarea>
+      </div>
+  
+      <div class="form-group" style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <div style="flex:1 1 220px">
+          <label for="metric_name">Metric name (optional)</label>
+          <input id="metric_name" name="metricName" placeholder="minutes, miles, dollars"/>
+        </div>
+        <div style="flex:1 1 160px">
+          <label for="metric_value">Metric value</label>
+          <input id="metric_value" name="metricValue" type="number" step="any"/>
+        </div>
+      </div>
+  
+      <button class="btn" type="submit">Add Log</button>
+    </form>
+  </section>
+  

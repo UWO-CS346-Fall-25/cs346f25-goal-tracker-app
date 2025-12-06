@@ -95,6 +95,7 @@ exports.getAbout = async (req, res, next) => {
 const Goal = require('../models/goals');
 const { getRandomPhotos } = require('./apiController');
 
+/*
 exports.getDashboard = async (req, res, next) => {
   
   try {
@@ -127,5 +128,50 @@ exports.getDashboard = async (req, res, next) => {
     );
   } catch (error) {
     next(error);
+  }
+};*/
+
+const { supabase } = require('../models/supabaseClient');
+
+exports.getDashboard = async (req, res) => {
+  try {
+    const userId = req.session?.user?.id;
+
+    const { count: totalGoals } = await supabase
+      .from('newgoal')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    const { count: activeMilestones } = await supabase
+      .from('milestones') 
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('is_complete', false);
+
+    const now = new Date();
+    const weekStart = new Date();
+    weekStart.setDate(now.getDate() - 7);
+
+    const { count: logsThisWeek } = await supabase
+      .from('logs') 
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', weekStart.toISOString());
+
+    res.render('dashboard', {
+      title: 'Dashboard',
+      user: req.session?.user,
+      csrfToken: req.csrfToken ? req.csrfToken() : '',
+      stats: {
+        totalGoals: totalGoals || 0,
+        activeMilestones: activeMilestones || 0,
+        logsThisWeek: logsThisWeek || 0,
+      },
+      cardPhotos: [], 
+      chart: { labels: [], values: [] }, 
+    });
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Dashboard error', error: err });
   }
 };

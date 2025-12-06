@@ -4,26 +4,35 @@
     <a href="/goals/new" class="btn">New Goal</a>
   </div>
 
-  <% if (!goals || goals.length === 0) { %>
+  <% if (!goals || goals.length===0) { %>
     <p>No goals yet. <a href="/goals/new">Create your first goal</a>.</p>
-  <% } else { %>
-    <div class="feature-grid">
-      <% goals.forEach(g => { %>
-        <div class="feature">
-          
-          <h3><a href="/goals/<%= g.id %>"><%= g.goalname %></a></h3>
-          <p><%= g.description || 'No description' %></p>
-          <p><small>Target: <%= g.due || '—' %></small></p>
-          <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
-            <a class="btn" href="/goals/<%= g.id %>">Open</a>
-            <a class="btn" href="/goals/<%= g.id %>/edit">Edit</a>
-            <form action="/goals/<%= g.id %>/archive" method="POST" class="inline">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button class="btn" type="submit">Archive</button>
-            </form>
+    <% } else { %>
+      <div class="feature-grid">
+        <% goals.forEach(g=> { %>
+          <div class="feature">
+
+            <h3><a href="/goals/<%= g.id %>">
+                <%= g.goalname %>
+              </a></h3>
+            <p>
+              <%= g.description || 'No description' %>
+            </p>
+            <p><small>Target: <%= g.due || '—' %></small></p>
+
+            <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+              <a class="btn" href="/goals/<%= g.id %>">Open</a>
+
+              <a class="btn" href="/goals/<%= g.id %>/milestones">Milestones</a>
+              <a class="btn" href="/goals/<%= g.id %>/logs">Logs</a>
+              <a class="btn" href="/goals/<%= g.id %>/edit">Edit</a>
+
+              <form action="/goals/<%= g.id %>/delete" method="POST" class="inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-danger" type="submit">Delete</button>
+              </form>
+            </div>
           </div>
-        </div>
-      <% }) %>
-    </div>
-  <% } %>
+          <% }) %>
+      </div>
+      <% } %>
 </section>

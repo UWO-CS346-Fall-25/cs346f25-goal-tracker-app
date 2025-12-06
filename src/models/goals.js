@@ -1,13 +1,12 @@
-// src/models/Goal.js
-const { supabase }  = require('./supabaseClient');
+const { supabase } = require('./supabaseClient');
 const TABLE = 'newgoal';
 
-exports.allByUser = async () => {
-  //const query = supabase.from(TABLE).select('*').order('due', { ascending: true });
-  //const q = id ? query.eq('id', id) : query;
+exports.allByUser = async (userId) => {
+
   const { data, error } = await supabase
-  .from(TABLE)
+    .from(TABLE)
     .select('*')
+    .eq('user_id', userId)
     .order('due', { ascending: true });
 
   if (error) throw error;
@@ -15,42 +14,37 @@ exports.allByUser = async () => {
 };
 
 
-exports.findById = async (id) => {
-  let q = supabase.from(TABLE).select('*').eq('id', id).single();
-  // To scope by user, add user_id filter when userId provided
-  if (id) {
-    // Supabase doesn't allow adding another eq after single() easily, so build query without single()
-    const { data, error } = await supabase
-      .from(TABLE)
-      .select('*')
-      .eq('id', id)
-      //.eq('user_id', userId)
-      .single();
-    if (error && error.code !== 'PGRST116') throw error;
-    return data || null;
-  }
+exports.findById = async (id, userId) => {
 
-  const { data, error } = await q;
-  if (error && error.code !== 'PGRST116') throw error;
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
   return data || null;
 };
 
-exports.create = async ({ title, description, due }) => {
+exports.create = async ({ title, description, due, user_id }) => {
   const row = {
-  goalname: title,
-  description: description || null,
-  due: due || null,  
+    goalname: title,
+    description: description || null,
+    due: due || null,
+    user_id,
   };
+
   const { data, error } = await supabase
     .from(TABLE)
     .insert(row)
     .select('id')
     .single();
+
   if (error) throw error;
-  return data; 
+  return data;
 };
 
-exports.update = async (id, _userId, { title, description, due }) => {
+exports.update = async (id, userId, { title, description, due }) => {
   const { error } = await supabase
     .from(TABLE)
     .update({
@@ -58,11 +52,17 @@ exports.update = async (id, _userId, { title, description, due }) => {
       description: description ?? null,
       due: due ?? null,
     })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', userId);
   if (error) throw error;
 };
 
-exports.destroy = async (id, _userId) => {
-  const { error } = await supabase.from(TABLE).delete().eq('id', id);
+exports.destroy = async (id, userId) => {
+  const { error } = await supabase
+
+    .from(TABLE)
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
   if (error) throw error;
 };

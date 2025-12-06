@@ -15,7 +15,7 @@
  * module.exports = router;
  */
 
-const express = require('express');
+/*const express = require('express');
 const router = express.Router();
 
 // Import controllers
@@ -45,6 +45,7 @@ router.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
+/*
 router.get('/dashboard', (req, res) => {
   res.render('dashboard', {
     title: 'Dashboard',
@@ -56,11 +57,39 @@ router.get('/dashboard', (req, res) => {
     },
   });
 });
-
+*/
+/*
 // demo JSON endpoint for client interactivity
 router.get('/hello', (_req, res) => {
   res.json({
     message: `Hello from the server @ ${new Date().toLocaleTimeString()}`,
+  });
+});
+
+module.exports = router;
+*/
+const express = require('express');
+const router = express.Router();
+
+const indexController = require('../controllers/indexController');
+
+// HOME PAGE
+router.get('/', indexController.getHome);
+
+// ABOUT PAGE
+router.get('/about', indexController.getAbout);
+
+// DASHBOARD (uses real Supabase data)
+router.get('/dashboard', indexController.getDashboard);
+
+// HEALTH CHECK
+router.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
+
+// SIMPLE JSON TEST
+router.get('/hello', (req, res) => {
+  const name = (req.query.name || 'there').trim();
+  res.json({
+    message: `Hello from the server @ ${new Date().toLocaleTimeString()}, ${name}!`,
   });
 });
 

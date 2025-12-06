@@ -25,6 +25,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const { supabase } = require('../models/supabaseClient');
 
 function requireGuest(req, res, next) {
   if (req.session?.user) return res.redirect('/dashboard');
@@ -64,6 +65,7 @@ router.get('/profile', requireAuth, (req, res) => {
 router.get('/profile', userController.getProfile);
 
 // Dashboard (protected)
+/*
 router.get('/dashboard', requireAuth, (req, res) => {
   const csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
   res.render('users/dashboard', {
@@ -71,7 +73,58 @@ router.get('/dashboard', requireAuth, (req, res) => {
     user: req.session.user,
     csrfToken
   });
+});*/
+
+router.get('/dashboard', requireAuth, async (req, res, next) => {
+  try {
+    const csrfToken =
+      typeof req.csrfToken === 'function' ? req.csrfToken() : '';
+
+    const userId = req.session.user.id; 
+
+    const { count: totalGoals, error: goalsError } = await supabase
+      .from('newgoal')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId); 
+
+    if (goalsError) throw goalsError;
+
+    const { count: activeMilestones, error: milestonesError } = await supabase
+      .from('milestones')           
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('is_complete', false);    
+
+    if (milestonesError) throw milestonesError;
+
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - 7);
+
+    const { count: logsThisWeek, error: logsError } = await supabase
+      .from('logs')                  
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', weekStart.toISOString());
+
+    if (logsError) throw logsError;
+
+    res.render('users/dashboard', {
+      title: 'Dashboard',
+      user: req.session.user,
+      csrfToken,
+      stats: {
+        totalGoals: totalGoals ?? 0,
+        activeMilestones: activeMilestones ?? 0,
+        logsThisWeek: logsThisWeek ?? 0,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 });
+
+
 /*
 router.get('/login', requireGuest, (req, res) => {
   res.render('users/login', {
