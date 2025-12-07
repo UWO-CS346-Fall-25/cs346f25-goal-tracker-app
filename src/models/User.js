@@ -1,38 +1,26 @@
 /**
  * User Model
- *
- * This model handles all database operations related to users.
- * Use parameterized queries ($1, $2, etc.) to prevent SQL injection.
- *
- * Example methods:
- * - findAll(): Get all users
- * - findById(id): Get user by ID
- * - findByEmail(email): Get user by email
- * - create(userData): Create a new user
- * - update(id, userData): Update a user
- * - delete(id): Delete a user
+ * Handles database operations for the `users` table.
  */
 
 const { supabase } = require('./supabaseClient');
 
 class User {
   /**
-   * Find all users
-   * @returns {Promise<Array>} Array of users
+   * Get all users (admin/debug use)
    */
   static async findAll() {
     const { data, error } = await supabase
       .from('users')
       .select('id, email, display_name, created_at')
       .order('created_at', { ascending: false });
+
     if (error) throw error;
     return data || [];
   }
 
   /**
-   * Find user by ID
-   * @param {number} id - User ID
-   * @returns {Promise<object|null>} User object or null
+   * Find a user by ID
    */
   static async findById(id) {
     const { data, error } = await supabase
@@ -40,14 +28,13 @@ class User {
       .select('id, email, display_name, created_at, updated_at')
       .eq('id', id)
       .maybeSingle();
+
     if (error) throw error;
     return data || null;
   }
 
   /**
-   * Find user by email (including password for authentication)
-   * @param {string} email - User email
-   * @returns {Promise<object|null>} User object or null
+   * Find a user by email
    */
   static async findByEmail(email) {
     const { data, error } = await supabase
@@ -55,35 +42,18 @@ class User {
       .select('id, email, display_name, created_at, updated_at')
       .eq('email', email)
       .maybeSingle();
+
     if (error) throw error;
     return data || null;
   }
 
   /**
-   * Create a new user
-   * @param {object} userData - User data { username, email, password }
-   * @returns {Promise<object>} Created user object
-   */
-  static async createProfile({ id, email, username }) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert({ id, email, display_name: username })
-      .select('id, email, display_name, created_at')
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  /**
-   * Update user
-   * @param {number} id - User ID
-   * @param {object} userData - User data to update
-   * @returns {Promise<object>} Updated user object
+   * Update profile fields
    */
   static async updateProfile(id, { email, username } = {}) {
     const patch = {};
-    if (email !== undefined) patch.email = email;
-    if (username !== undefined) patch.display_name = username;
+    if (email) patch.email = email;
+    if (username) patch.display_name = username;
 
     const { data, error } = await supabase
       .from('users')
@@ -91,17 +61,20 @@ class User {
       .eq('id', id)
       .select('id, email, display_name, created_at, updated_at')
       .single();
+
     if (error) throw error;
     return data;
   }
 
   /**
-   * Delete user
-   * @param {number} id - User ID
-   * @returns {Promise<boolean>} True if deleted, false otherwise
+   * Delete a user profile row
    */
   static async deleteProfile(id) {
-    const { error } = await supabase.from('users').delete().eq('id', id);
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', id);
+
     if (error) throw error;
     return true;
   }
