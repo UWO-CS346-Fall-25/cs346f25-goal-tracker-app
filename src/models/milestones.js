@@ -9,7 +9,6 @@ exports.forGoal = async (goalId, userId) => {
     .eq('goal_id', goalId)
     .eq('user_id', userId)
     .order('due', { ascending: true }); // keep soonest items first
-  //.order('created_at', { ascending: true });
 
   if (error) throw error;
   return data ?? [];

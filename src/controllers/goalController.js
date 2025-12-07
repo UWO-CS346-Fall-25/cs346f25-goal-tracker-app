@@ -71,18 +71,18 @@ exports.create = async (req, res, next) => {
       goal: {
         title: req.body.title,
         description: req.body.description,
-        targetDate: req.body.targetDate,
+        due: req.body.due,
       },
     });
 
   try {
-    const { title, description, targetDate } = req.body;
+    const { title, description, due } = req.body;
     const userId = req.session.user.id; // associate goal with logged-in user
 
     const created = await Goal.create({
       title,
       description,
-      due: targetDate || null,
+      due: due || null,
       user_id: userId,
     });
     const { id } = created;

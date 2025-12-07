@@ -11,7 +11,7 @@
 // Import models
 // const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
-const supabase = require('../models/supabaseClient').supabase;
+const { supabase } = require('../models/supabaseClient');
 const User = require('../models/User');
 
 // Renders auth forms and connects them to Supabase Auth + local profile table
@@ -69,23 +69,33 @@ exports.postRegister = [
           values: { email, display_name: username },
         });
       }
-      // If email confirmation is ON, Supabase returns null user until they verify
-      if (!data.user) {
-        // Show a friendly notice and send to login
-        return res.redirect('/users/login');
-      }
-      // Ensure a profile row exists in public.users (mirrors auth.users)
-      const existing = await User.findById(data.user.id);
-      if (!existing)
-        await User.createProfile({ id: data.user.id, email, username });
+      const userId = data.user.id;
 
-      // Create server-side session so app can authorize future requests
-      req.session.user = { id: data.user.id, email, display_name: username };
-      return req.session.save(() =>
-        res.redirect(req.session.returnTo || '/dashboard')
-      );
-    } catch (error) {
-      next(error);
+      await supabase
+        .from('users')
+        .insert({
+          id: userId,
+          email,
+          display_name: username,
+        })
+        .then(() => console.log("Profile row created"))
+        .catch(err => console.error("Profile insert error:", err));
+
+      if (!data.session) {
+        return res.render('users/check_email', {
+          title: 'Confirm Your Email',
+          message: 'Registration successful! Please check your inbox and confirm your email.',
+        });
+      }
+      req.session.user = {
+        id: userId,
+        email,
+        display_name: username,
+      };
+
+      return req.session.save(() => res.redirect('/dashboard'));
+    } catch (err) {
+      next(err);
     }
   },
 ];
@@ -128,32 +138,50 @@ exports.postLogin = [
         password,
       }); // Supabase Auth check
       if (error) {
-        const message = /confirm|verified/i.test(error.message)
-          ? 'Email not confirmed. Please check your inbox.'
-          : 'Invalid email or password';
         return res.status(401).render('users/login', {
           title: 'Login',
           csrfToken: req.csrfToken(),
-          errors: [{ msg: message }],
+          errors: [{ msg: "Invalid email or password" }],
           values: { email },
         });
       }
-      // Load display name from profile (if any) so UI can greet user
-      const profile = await User.findById(data.user.id);
-      const display_name =
-        profile?.username ||
+      const userId = data.user.id;
+
+      let profile = await User.findById(userId);
+      let display_name =
         profile?.display_name ||
         data.user.user_metadata?.username ||
-        '';
+        email.split("@")[0];
+
+      if (!profile) {
+        console.log("Profile missing — creating now.");
+
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: userId,
+            email: data.user.email,
+            display_name,
+          });
+
+        if (insertError) {
+          console.error("Failed to auto-create profile:", insertError);
+          throw insertError;
+        }
+
+        profile = await User.findById(userId);
+      }
 
       req.session.user = {
-        id: data.user.id,
+        id: userId,
         email: data.user.email,
         display_name,
       };
+
       return req.session.save(() =>
         res.redirect(req.session.returnTo || '/dashboard')
       );
+
     } catch (error) {
       next(error);
     }
@@ -165,10 +193,7 @@ exports.postLogin = [
  * Logout user
  */
 exports.postLogout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-    }
+  req.session.destroy(() => {
     res.redirect('/users/login');
   });
 };
@@ -177,4 +202,3 @@ exports.getProfile = (req, res) => {
   if (!req.session.user) return res.redirect('/users/login');
   res.render('profile', { title: 'Profile' });
 };
-// Add more controller methods as needed

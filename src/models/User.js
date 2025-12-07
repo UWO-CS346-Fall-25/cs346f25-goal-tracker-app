@@ -62,21 +62,6 @@ class User {
   }
 
   /**
-   * Create a new user
-   * @param {object} userData - User data { username, email, password }
-   * @returns {Promise<object>} Created user object
-   */
-  static async createProfile({ id, email, username }) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert({ id, email, display_name: username })
-      .select('id, email, display_name, created_at')
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  /**
    * Update user
    * @param {number} id - User ID
    * @param {object} userData - User data to update
@@ -84,8 +69,8 @@ class User {
    */
   static async updateProfile(id, { email, username } = {}) {
     const patch = {}; // Only send fields supplied by caller
-    if (email !== undefined) patch.email = email;
-    if (username !== undefined) patch.display_name = username;
+    if (email) patch.email = email;
+    if (username) patch.display_name = username;
 
     const { data, error } = await supabase
       .from('users')
