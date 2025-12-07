@@ -19,6 +19,7 @@
  * Display the home page
  */
 
+// Shared renderer that injects common locals (user + CSRF token) into views
 function renderPage(res, view, locals = {}, req) {
   const baseLocals = {
     user: req?.session?.user || null,
@@ -40,6 +41,7 @@ function renderPage(res, view, locals = {}, req) {
 exports.getHome = async (req, res, next) => {
   try {
     const features = [
+      // cards rendered on landing page hero section
       {
         icon: '👤',
         title: 'Accounts & Profiles',
@@ -79,14 +81,19 @@ exports.getAbout = (req, res) => {
 */
 exports.getAbout = async (req, res, next) => {
   try {
-    const photos = await getRandomPhotos(1, 'goals success motivation');
+    const photos = await getRandomPhotos(1, 'goals success motivation'); // reuse Unsplash helper
     const aboutPhoto = photos?.[0] || null;
 
-    renderPage(res, 'about', {
-      title: 'About',
-      showHero: false,
-      aboutPhoto,
-    }, req);
+    renderPage(
+      res,
+      'about',
+      {
+        title: 'About',
+        showHero: false,
+        aboutPhoto,
+      },
+      req
+    );
   } catch (error) {
     next(error);
   }
@@ -136,27 +143,28 @@ const { supabase } = require('../models/supabaseClient');
 exports.getDashboard = async (req, res) => {
   try {
     const userId = req.session?.user?.id;
+    if (!userId) return res.redirect('/users/login'); // guard dashboard for authenticated users
 
     const { count: totalGoals } = await supabase
       .from('newgoal')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId);
+      .eq('user_id', userId); // count goals owned by user
 
     const { count: activeMilestones } = await supabase
-      .from('milestones') 
+      .from('milestones')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .eq('is_complete', false);
+      .eq('is_complete', false); // outstanding milestones only
 
     const now = new Date();
     const weekStart = new Date();
-    weekStart.setDate(now.getDate() - 7);
+    weekStart.setDate(now.getDate() - 7); // rolling 7-day window
 
     const { count: logsThisWeek } = await supabase
-      .from('logs') 
+      .from('logs')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .gte('created_at', weekStart.toISOString());
+      .gte('created_at', weekStart.toISOString()); // time-bound filter
 
     res.render('dashboard', {
       title: 'Dashboard',
@@ -167,8 +175,8 @@ exports.getDashboard = async (req, res) => {
         activeMilestones: activeMilestones || 0,
         logsThisWeek: logsThisWeek || 0,
       },
-      cardPhotos: [], 
-      chart: { labels: [], values: [] }, 
+      cardPhotos: [], // placeholder until Unsplash integrations are re-enabled
+      chart: { labels: [], values: [] }, // chart data TODO
     });
   } catch (err) {
     console.error(err);

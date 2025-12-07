@@ -1,3 +1,4 @@
+<!-- Goal index page showing every goal owned by logged-in user -->
 <section class="features">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <h2>Your Goals</h2>
@@ -22,10 +23,12 @@
             <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
               <a class="btn" href="/goals/<%= g.id %>">Open</a>
 
+              <!-- Quick links into nested resources -->
               <a class="btn" href="/goals/<%= g.id %>/milestones">Milestones</a>
               <a class="btn" href="/goals/<%= g.id %>/logs">Logs</a>
               <a class="btn" href="/goals/<%= g.id %>/edit">Edit</a>
 
+              <!-- Deleting requires CSRF token because it mutates data -->
               <form action="/goals/<%= g.id %>/delete" method="POST" class="inline">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button class="btn btn-danger" type="submit">Delete</button>

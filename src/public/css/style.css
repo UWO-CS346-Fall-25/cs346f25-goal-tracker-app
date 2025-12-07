@@ -49,7 +49,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Layout */
+/* Layout: centers content and constrains width for readability */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -222,7 +222,7 @@ main {
   padding: 2rem 0;
 }
 
-/* Hero Section */
+/* Hero Section: bold gradient card for marketing copy */
 .hero {
   text-align: center;
   padding: 3rem 0;
@@ -245,7 +245,7 @@ main {
   font-size: 1.25rem;
 }
 
-/* Features Section */
+/* Features Section: responsive grid of selling points */
 .features {
   margin: 1rem 0;
 }
@@ -278,7 +278,7 @@ main {
   margin-bottom: 1rem;
 }
 
-/* Getting Started Section */
+/* Getting Started Section: callout list with command styling */
 .getting-started {
   background-color: var(--light-color);
   padding: 2rem;
@@ -308,7 +308,7 @@ main {
   font-family: 'Courier New', monospace;
 }
 
-/* Error Page */
+/* Error Page: full-screen fallback styling */
 .error-page {
   text-align: center;
   padding: 3rem 0;
@@ -339,7 +339,7 @@ main {
   word-wrap: break-word;
 }
 
-/* Buttons */
+/* Buttons: consistent pill styling for links + form actions */
 .btn {
   display: inline-block;
   padding: 0.75rem 1.5rem;
@@ -358,7 +358,7 @@ main {
   text-decoration: none;
 }
 
-/* Forms */
+/* Forms: stack labels/inputs with shared spacing */
 .form-group {
   margin-bottom: 1rem;
 }
@@ -388,7 +388,7 @@ footer {
   margin-top: 3rem;
 }
 
-/* Responsive Design */
+/* Responsive Design: collapse nav + grids on tablets/phones */
 @media (max-width: 768px) {
   .nav-links {
     flex-direction: column;
@@ -415,7 +415,7 @@ footer {
   padding: 0.9rem 0;
 }
 
-/* Glassy page nav under hero */
+/* Glassy page nav under hero (activated when hero nav uncommented) */
 .page-nav {
   position: relative;
   margin-top: -1.2rem; /* hugs hero */
@@ -491,6 +491,7 @@ footer {
   padding: 2rem 0;
 }
 
+/* Dashboard stat cards: background photo tiles with overlay */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -511,7 +512,7 @@ footer {
 .stat-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255, 255, 255, 0.85);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -519,7 +520,7 @@ footer {
 }
 
 .feature.stat-card {
-  padding: 0;                 /* overlay already pads content */
+  padding: 0; /* overlay already pads content */
   background-color: transparent;
 }
 
@@ -534,15 +535,15 @@ footer {
   background-repeat: no-repeat;
 
   position: relative;
-  padding: 2rem 2.5rem;   /* space from top-left */
+  padding: 2rem 2.5rem; /* space from top-left */
 }
 
 /* fade layer on the image */
 .about-page::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: rgba(246, 240, 255, 0.80); /* keep it faded */
+  background: rgba(246, 240, 255, 0.8); /* keep it faded */
   backdrop-filter: blur(2px);
 }
 
@@ -551,20 +552,20 @@ footer {
   position: relative;
   z-index: 1;
 
-  background: transparent;  /* no box */
+  background: transparent; /* no box */
   box-shadow: none;
   border-radius: 0;
-  padding: 0;               /* no extra padding */
-  margin: 0;                /* no centering */
-  max-width: 720px;         /* keep readable line length */
+  padding: 0; /* no extra padding */
+  margin: 0; /* no centering */
+  max-width: 720px; /* keep readable line length */
 }
 
 /* About page bullets indentation */
 .about-page ul {
-  padding-left: 1.5rem;   /* pushes bullets in */
-  margin-left: 0.5rem;    /* extra nudge */
+  padding-left: 1.5rem; /* pushes bullets in */
+  margin-left: 0.5rem; /* extra nudge */
 }
 
 .about-page li {
-  margin-bottom: 0.4rem;  /* nice spacing */
+  margin-bottom: 0.4rem; /* nice spacing */
 }

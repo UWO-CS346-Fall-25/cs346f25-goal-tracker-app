@@ -1,3 +1,4 @@
+<!-- Goal detail page including milestones + logs -->
 <section class="features">
   <h2><%= goal.goalname || 'Goal' %></h2>
   <p><%= goal.description || 'No description' %></p>
@@ -31,6 +32,7 @@
       <% }) %>
     </ul>
 
+    <!-- Minimal form for adding a milestone inline -->
     <form action="/goals/<%= goal.id %>/milestones" method="POST" data-validate>
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">
@@ -71,6 +73,7 @@
       <% }) %>
     </ul>
 
+    <!-- Log creation form with optional metric tracking -->
     <form action="/goals/<%= goal.id %>/logs" method="POST" data-validate>
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">

@@ -7,8 +7,8 @@
  * - Handling server startup errors
  */
 
-require('dotenv').config();
-const app = require('./app');
+require('dotenv').config(); // Pull in .env before anything else needs secrets
+const app = require('./app'); // Express app with routes/middleware wired up
 
 // Server configuration
 const PORT = process.env.PORT || 3000;

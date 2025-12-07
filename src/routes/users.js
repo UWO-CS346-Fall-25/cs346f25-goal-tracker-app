@@ -1,25 +1,9 @@
 /**
  * User Routes
  *
- * Define routes related to user operations here.
- * This could include:
- * - User registration
- * - User login/logout
- * - User profile
- * - User management (admin)
- *
- * Example usage:
- * const express = require('express');
- * const router = express.Router();
- * const userController = require('../controllers/userController');
- *
- * router.get('/register', userController.getRegister);
- * router.post('/register', userController.postRegister);
- * router.get('/login', userController.getLogin);
- * router.post('/login', userController.postLogin);
- * router.post('/logout', userController.postLogout);
- *
- * module.exports = router;
+ * Handles everything around authentication (register/login/logout) plus the
+ * personalized profile + dashboard experiences. Route handlers lean on
+ * `userController` for the heavy logic, keeping this file declarative.
  */
 
 const express = require('express');
@@ -27,11 +11,13 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { supabase } = require('../models/supabaseClient');
 
+// Visitors should not see auth forms once signed in
 function requireGuest(req, res, next) {
   if (req.session?.user) return res.redirect('/dashboard');
   next();
 }
 
+// Ensure downstream handlers have a logged-in user and remember return path
 function requireAuth(req, res, next) {
   if (!req.session?.user) {
     // remember where to go after login
@@ -40,7 +26,6 @@ function requireAuth(req, res, next) {
   }
   next();
 }
-
 
 // Register
 router.get('/register', requireGuest, userController.getRegister);
@@ -75,25 +60,28 @@ router.get('/dashboard', requireAuth, (req, res) => {
   });
 });*/
 
+// Authenticated dashboard with quick stats fetched directly via Supabase
 router.get('/dashboard', requireAuth, async (req, res, next) => {
   try {
     const csrfToken =
       typeof req.csrfToken === 'function' ? req.csrfToken() : '';
 
-    const userId = req.session.user.id; 
+    const userId = req.session.user.id;
 
+    // Count current goals for hero metric
     const { count: totalGoals, error: goalsError } = await supabase
       .from('newgoal')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId); 
+      .eq('user_id', userId);
 
     if (goalsError) throw goalsError;
 
+    // Only include milestones still open
     const { count: activeMilestones, error: milestonesError } = await supabase
-      .from('milestones')           
+      .from('milestones')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .eq('is_complete', false);    
+      .eq('is_complete', false);
 
     if (milestonesError) throw milestonesError;
 
@@ -101,8 +89,9 @@ router.get('/dashboard', requireAuth, async (req, res, next) => {
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - 7);
 
+    // Recent progress (logs created in last 7 days)
     const { count: logsThisWeek, error: logsError } = await supabase
-      .from('logs')                  
+      .from('logs')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
       .gte('created_at', weekStart.toISOString());
@@ -123,7 +112,6 @@ router.get('/dashboard', requireAuth, async (req, res, next) => {
     next(err);
   }
 });
-
 
 /*
 router.get('/login', requireGuest, (req, res) => {

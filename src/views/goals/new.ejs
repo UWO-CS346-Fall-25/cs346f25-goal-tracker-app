@@ -1,9 +1,11 @@
+<!-- Form for creating a new goal; surfaced errors highlight inputs inline -->
 <section class="getting-started">
   <h2>Create a Goal</h2>
   
   <% 
     const errs = Array.isArray(errors) ? errors : [];
     const err = {};
+    // Map validation errors by field path for quick lookup
     errs.forEach(e => err[e.path || e.param] = e.msg);
     const g = (typeof goal === 'object' && goal) ? goal : {};
   %>

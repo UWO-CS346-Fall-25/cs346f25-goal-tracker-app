@@ -1,3 +1,4 @@
+<!-- Dedicated page for browsing + creating logs tied to a single goal -->
 <section class="features">
     <h2><%= goal.goalname %> – Logs</h2>
     <p><a href="/goals/<%= goal.id %>">Back to goal</a></p>
@@ -22,6 +23,7 @@
     <hr />
   
     <h3>Add log</h3>
+    <!-- POSTs back to goalController.postLog; CSRF token comes from server middleware -->
     <form action="/goals/<%= goal.id %>/logs" method="POST">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">

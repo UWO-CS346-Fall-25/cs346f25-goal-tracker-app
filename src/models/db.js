@@ -63,16 +63,22 @@ module.exports = {
 */
 const { Pool } = require('pg');
 
+// Legacy pg helper (most new code uses Supabase)
 const conn = (process.env.DATABASE_URL || '').trim();
 if (!conn) {
-  console.warn('[db] DATABASE_URL not set. Any code calling db.query will fail.');
+  console.warn(
+    '[db] DATABASE_URL not set. Any code calling db.query will fail.'
+  );
 }
 
-const pool = conn ? new Pool({ connectionString: conn, ssl: { rejectUnauthorized: false } }) : null;
+// Lazily instantiate pool only when connection string exists
+const pool = conn
+  ? new Pool({ connectionString: conn, ssl: { rejectUnauthorized: false } })
+  : null;
 
 async function query(text, params) {
   if (!pool) throw new Error('DATABASE_URL missing for db.query');
   return pool.query(text, params);
 }
 
-module.exports = { query };  
+module.exports = { query };

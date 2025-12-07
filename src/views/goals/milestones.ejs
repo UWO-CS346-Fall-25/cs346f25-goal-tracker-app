@@ -1,3 +1,4 @@
+<!-- Full-page milestone manager broken into completed vs incomplete sections -->
 <section class="features">
     <h2><%= goal.goalname %> – Milestones</h2>
     <p><a href="/goals/<%= goal.id %>">Back to goal</a></p>
@@ -12,6 +13,7 @@
             <strong><%= m.title %></strong>
             <small> (due: <%= m.due_date || '—' %>)</small>
   
+            <!-- Toggle + delete actions post to goalController handlers -->
             <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" class="inline" style="margin-left:.5rem">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button class="btn" type="submit">Complete</button>
