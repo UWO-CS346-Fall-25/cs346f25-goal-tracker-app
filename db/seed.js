@@ -7,7 +7,7 @@
  * Usage: npm run seed
  */
 
-require('dotenv').config();
+require('dotenv').config(); // so DATABASE_URL is available
 const fs = require('fs');
 const path = require('path');
 const db = require('../src/models/db');
@@ -21,7 +21,7 @@ async function runSeeds() {
     const files = fs
       .readdirSync(seedsDir)
       .filter((file) => file.endsWith('.sql'))
-      .sort();
+      .sort(); // deterministic order when multiple seed files exist
 
     if (files.length === 0) {
       console.log('No seed files found.');
@@ -34,7 +34,7 @@ async function runSeeds() {
       const filePath = path.join(seedsDir, file);
       const sql = fs.readFileSync(filePath, 'utf8');
 
-      await db.query(sql);
+      await db.query(sql); // run SQL file contents directly
       console.log(`✓ Seed ${file} completed successfully`);
     }
 
@@ -44,7 +44,7 @@ async function runSeeds() {
     process.exit(1);
   } finally {
     // Close database connection
-    await db.pool.end();
+    await db.pool.end(); // release connections for Node process exit
   }
 }
 

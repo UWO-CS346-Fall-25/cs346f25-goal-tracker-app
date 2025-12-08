@@ -7,7 +7,7 @@
  * Usage: npm run reset
  */
 
-require('dotenv').config();
+require('dotenv').config(); // ensure DATABASE_URL etc. before connecting
 const { execSync } = require('child_process');
 const readline = require('readline');
 const db = require('../src/models/db');
@@ -35,6 +35,7 @@ async function resetDatabase() {
         console.log('Dropping all tables...');
 
         // Get all table names
+        // Fetch every table in the public schema so we can drop them all
         const result = await db.query(`
         SELECT tablename FROM pg_tables 
         WHERE schemaname = 'public'
@@ -51,11 +52,11 @@ async function resetDatabase() {
 
         // Run migrations
         console.log('\nRunning migrations...');
-        execSync('npm run migrate', { stdio: 'inherit' });
+        execSync('npm run migrate', { stdio: 'inherit' }); // rebuild schema
 
         // Run seeds
         console.log('\nRunning seeds...');
-        execSync('npm run seed', { stdio: 'inherit' });
+        execSync('npm run seed', { stdio: 'inherit' }); // repopulate baseline data
 
         console.log('\n✓ Database reset completed successfully!');
       } catch (error) {

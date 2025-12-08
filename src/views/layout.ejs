@@ -1,3 +1,4 @@
+<!-- Base HTML shell shared by every EJS view -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= typeof title !== 'undefined' ? `${title} — Goal Tracker` : 'Goal Tracker' %></title>
 
-  <!-- CSRF for client JS -->
+  <!-- CSRF token exposed for fetch/ajax requests -->
   <meta name="csrf-token" content="<%= (typeof csrfToken !== 'undefined' ? csrfToken : '') %>">
 
   <link rel="stylesheet" href="/css/style.css" />

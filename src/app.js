@@ -32,9 +32,13 @@ app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === '1') {
   app.set('trust proxy', 1);
 }
- 
-const supabaseOrigin = (() => {                
-  try { return new URL(process.env.SUPABASE_URL).origin; } catch { return null; }
+
+const supabaseOrigin = (() => {
+  try {
+    return new URL(process.env.SUPABASE_URL).origin;
+  } catch {
+    return null;
+  }
 })(); //This seems like different convention from from what was in the requirements
 
 // Security middleware - Helmet
@@ -47,7 +51,12 @@ app.use(
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", 'data:', 'https:'],
         fontSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'", ...(supabaseOrigin ? [supabaseOrigin] : []), 'https://*.supabase.co', 'wss://*.supabase.co'],
+        connectSrc: [
+          "'self'",
+          ...(supabaseOrigin ? [supabaseOrigin] : []),
+          'https://*.supabase.co',
+          'wss://*.supabase.co',
+        ],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         frameAncestors: ["'self'"],

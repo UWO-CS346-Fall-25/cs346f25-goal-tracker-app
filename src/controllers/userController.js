@@ -11,8 +11,10 @@
 // Import models
 // const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
-const  supabase  = require('../models/supabaseClient').supabase;
+const { supabase } = require('../models/supabaseClient');
 const User = require('../models/User');
+
+// Renders auth forms and connects them to Supabase Auth + local profile table
 
 /**
  * GET /users/register
@@ -34,7 +36,9 @@ exports.getRegister = (req, res) => {
 exports.postRegister = [
   body('email').trim().isEmail().withMessage('Enter a valid email'),
   body('display_name').trim().notEmpty().withMessage('Display name required'),
-  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 chars'),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 chars'),
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
@@ -48,11 +52,14 @@ exports.postRegister = [
           values: { email, display_name: username },
         });
       }
-      // Supabase sign up (email confirm optional in Supabase settings)
+      // Supabase sign up (email confirm optional in Supabase dashboard)
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username }, emailRedirectTo: 'http://localhost:3000/users/login' },
+        options: {
+          data: { username },
+          emailRedirectTo: 'http://localhost:3000/users/login',
+        },
       });
       if (error) {
         return res.status(400).render('users/register', {
@@ -62,24 +69,36 @@ exports.postRegister = [
           values: { email, display_name: username },
         });
       }
-      // If email confirmation is ON, data.user may be null until they click the link
-      if (!data.user) {
-        // Show a friendly notice and send to login
-        return res.redirect('/users/login');
+      const userId = data.user.id;
+
+      await supabase
+        .from('users')
+        .insert({
+          id: userId,
+          email,
+          display_name: username,
+        })
+        .then(() => console.log("Profile row created"))
+        .catch(err => console.error("Profile insert error:", err));
+
+      if (!data.session) {
+        return res.render('users/check_email', {
+          title: 'Confirm Your Email',
+          message: 'Registration successful! Please check your inbox and confirm your email.',
+        });
       }
-      // Ensure a profile row exists in public.users (id matches auth.users.id)
-      const existing = await User.findById(data.user.id);
-      if (!existing) await User.createProfile({ id: data.user.id, email, username });
+      req.session.user = {
+        id: userId,
+        email,
+        display_name: username,
+      };
 
-      // Create our session
-      req.session.user = { id: data.user.id, email, display_name: username };
-      return req.session.save(() => res.redirect(req.session.returnTo || '/dashboard'));
-    } catch (error) {
-      next(error);
+      return req.session.save(() => res.redirect('/dashboard'));
+    } catch (err) {
+      next(err);
     }
-  }
+  },
 ];
-
 
 /**
  * GET /users/login
@@ -114,41 +133,67 @@ exports.postLogin = [
           values: { email },
         });
       }
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      }); // Supabase Auth check
       if (error) {
-        const message = /confirm|verified/i.test(error.message)
-          ? 'Email not confirmed. Please check your inbox.'
-          : 'Invalid email or password';
         return res.status(401).render('users/login', {
           title: 'Login',
           csrfToken: req.csrfToken(),
-          errors: [{ msg: message }],
+          errors: [{ msg: "Invalid email or password" }],
           values: { email },
         });
       }
-      // Load display name from profile (if any)
-      const profile = await User.findById(data.user.id);
-      const display_name =
-        profile?.username || profile?.display_name || data.user.user_metadata?.username || '';
+      const userId = data.user.id;
 
-      req.session.user = { id: data.user.id, email: data.user.email, display_name };
-      return req.session.save(() => res.redirect(req.session.returnTo || '/dashboard'));
+      let profile = await User.findById(userId);
+      let display_name =
+        profile?.display_name ||
+        data.user.user_metadata?.username ||
+        email.split("@")[0];
+
+      if (!profile) {
+        console.log("Profile missing — creating now.");
+
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: userId,
+            email: data.user.email,
+            display_name,
+          });
+
+        if (insertError) {
+          console.error("Failed to auto-create profile:", insertError);
+          throw insertError;
+        }
+
+        profile = await User.findById(userId);
+      }
+
+      req.session.user = {
+        id: userId,
+        email: data.user.email,
+        display_name,
+      };
+
+      return req.session.save(() =>
+        res.redirect(req.session.returnTo || '/dashboard')
+      );
+
     } catch (error) {
       next(error);
     }
-  }
+  },
 ];
-
 
 /**
  * POST /users/logout
  * Logout user
  */
 exports.postLogout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-    }
+  req.session.destroy(() => {
     res.redirect('/users/login');
   });
 };
@@ -157,4 +202,3 @@ exports.getProfile = (req, res) => {
   if (!req.session.user) return res.redirect('/users/login');
   res.render('profile', { title: 'Profile' });
 };
-// Add more controller methods as needed

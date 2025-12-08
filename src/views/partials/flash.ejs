@@ -1,5 +1,6 @@
+<!-- Flash Message Partial: expects `flash` object on locals (type + message) -->
 <% if (locals.flash && flash.message) { %>
-    <div class="flash <%= flash.type || 'info' %>">
+    <div class="flash <%= flash.type || 'info' %>"><!-- default style falls back to info -->
       <%= flash.message %>
     </div>
   <% } %>

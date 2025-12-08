@@ -1,0 +1,33 @@
+<!-- Compact milestone list partial for embedding inside other views -->
+<section class="features">
+    <h2>Milestones for <%= goal.goalname %></h2>
+  
+    <h3>Incomplete</h3>
+    <ul>
+      <% milestones.filter(m => !m.is_complete).forEach(m => { %>
+        <li>
+          <strong><%= m.title %></strong> — due <%= m.due_date || "—" %>
+  
+          <!-- POST toggle uses CSRF token supplied by layout middleware -->
+          <form method="POST" action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" class="inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn">Mark Complete</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  
+    <h3>Completed</h3>
+    <ul>
+      <% milestones.filter(m => m.is_complete).forEach(m => { %>
+        <li>
+          ✔ <strong><%= m.title %></strong>
+          <form method="POST" action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" class="inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn">Undo</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+  

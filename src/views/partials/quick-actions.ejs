@@ -1,9 +1,11 @@
+<!-- Floating quick-actions menu used on dashboard pages -->
 <section class="quick-actions">
     <ul class="page-nav__links">
       <li><a href="/goals/new" class="chip">🎯 New Goal</a></li>
       <li><a href="/goals" class="chip">🏆 Goals</a></li>
       <!--<li><a href="/profile" class="chip">👤 Profile</a></li>-->
       <li>
+        <!-- Hidden logout form so JS can submit it from a floating button -->
         <form action="/users/logout" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         </form>

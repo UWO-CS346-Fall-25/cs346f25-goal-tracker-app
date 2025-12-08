@@ -1,3 +1,4 @@
+<!-- Goal detail page including milestones + logs -->
 <section class="features">
   <h2><%= goal.goalname || 'Goal' %></h2>
   <p><%= goal.description || 'No description' %></p>
@@ -5,24 +6,24 @@
 
   <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0">
     <a class="btn" href="/goals/<%= goal.id %>/edit">Edit</a>
-    <form action="/goals/<%= goal.id %>/archive" method="POST" class="inline">
+    <form action="/goals/<%= goal.id %>/delete" method="POST" class="inline">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <button class="btn" type="submit">Archive</button>
+      <button class="btn btn-danger" type="submit">Delete</button>
     </form>
   </div>
 
   <!-- Milestones -->
-  <div class="getting-started">
+  <div class="getting-started" id="milestones">
     <h2>Milestones</h2>
     <ul style="margin:.5rem 0 1rem 1.25rem">
       <% (milestones || []).forEach(m => { %>
         <li style="margin:.35rem 0">
           <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" class="inline">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit"><%= m.done ? '✅' : '⬜' %></button>
+            <button class="btn" type="submit"><%= m.is_complete ? '✅' : '⬜' %></button>
           </form>
           <strong><%= m.title %></strong>
-          <small>due <%= m.due_date || '—' %></small>
+          <small>due <%= m.due || '—' %></small>
           <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/delete" method="POST" class="inline" style="margin-left:.5rem">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Delete</button>
@@ -31,6 +32,7 @@
       <% }) %>
     </ul>
 
+    <!-- Minimal form for adding a milestone inline -->
     <form action="/goals/<%= goal.id %>/milestones" method="POST" data-validate>
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">
@@ -46,13 +48,13 @@
   </div>
 
   <!-- Progress Logs -->
-  <div class="getting-started">
+  <div class="getting-started" id="logs">
     <h2>Progress Logs</h2>
 
     <ul style="margin-left:1.25rem">
       <% (logs || []).forEach(l => { %>
         <li style="margin:.5rem 0">
-          <strong><%= l.entry_date %></strong> — <%= l.note %>
+          <strong><%= l.created_at %></strong> — <%= l.note %>
           <% if (l.metric_name && l.metric_value != null) { %>
             <em>(<%= l.metric_name %>: <%= l.metric_value %>)</em>
           <% } %>
@@ -71,7 +73,8 @@
       <% }) %>
     </ul>
 
-    <form action="/goals/<%= goal.id %>/logs" method="POST" enctype="multipart/form-data" data-validate>
+    <!-- Log creation form with optional metric tracking -->
+    <form action="/goals/<%= goal.id %>/logs" method="POST" data-validate>
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">
         <label for="note">Note*</label>
@@ -87,11 +90,8 @@
           <input id="metric_value" name="metric_value" type="number" step="any"/>
         </div>
       </div>
-      <div class="form-group">
-        <label for="files">Attachments (images/PDFs)</label>
-        <input id="files" name="files" type="file" multiple accept="image/*,application/pdf"/>
-      </div>
       <button class="btn" type="submit">Add Log</button>
     </form>
+    
   </div>
 </section>

@@ -1,5 +1,11 @@
+<!--
+  Registration Page Template
+  Presents the signup form that POSTs to /users/register (handled by userController.postRegister).
+  Mirrors login.ejs structure for a consistent experience.
+-->
 <h1 style="margin-bottom:1rem;">Register</h1>
 
+<!-- Surface validation errors returned by the controller (e.g., short password) -->
 <% if (typeof errors !== 'undefined' && errors.length) { %>
   <div class="alert alert-danger" style="margin-bottom:1rem;">
     <ul style="margin:0; padding-left:1.25rem;">
@@ -8,9 +14,15 @@
   </div>
 <% } %>
 
+<!--
+  Signup Form: CSRF-protected POST back to the users router.
+  The data-validate hook allows optional client-side enhancements.
+-->
 <form method="POST" action="/users/register" data-validate>
+  <!-- CSRF token generated per session/request by server middleware -->
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
+  <!-- Preserve display name input when server returns validation errors -->
   <div class="form-group">
     <label for="display_name">Display name</label>
     <input
@@ -22,6 +34,7 @@
     />
   </div>
   
+  <!-- Email gets HTML5 validation and autofill hints -->
   <div class="form-group">
     <label for="email">Email</label>
     <input
@@ -34,6 +47,7 @@
     />
   </div>
   
+  <!-- Password field intentionally never pre-populated -->
   <div class="form-group">
     <label for="password">Password (8+ chars)</label>
     <input
@@ -45,9 +59,11 @@
     />
   </div>
 
+  <!-- Submit button triggers creation flow via userController.postRegister -->
   <button class="btn" type="submit">Create account</button>
 </form>
 
+<!-- Provide quick navigation back to the login page for returning users -->
 <p style="margin-top:1rem;">
 Already have an account? <a href="/users/login">Log in</a>
 </p>

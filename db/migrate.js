@@ -7,7 +7,7 @@
  * Usage: npm run migrate
  */
 
-require('dotenv').config();
+require('dotenv').config(); // Ensure DATABASE_URL exists for db helper
 const fs = require('fs');
 const path = require('path');
 const db = require('../src/models/db');
@@ -21,7 +21,7 @@ async function runMigrations() {
     const files = fs
       .readdirSync(migrationsDir)
       .filter((file) => file.endsWith('.sql'))
-      .sort();
+      .sort(); // Ensure migrations run in lexical order
 
     if (files.length === 0) {
       console.log('No migration files found.');
@@ -34,7 +34,7 @@ async function runMigrations() {
       const filePath = path.join(migrationsDir, file);
       const sql = fs.readFileSync(filePath, 'utf8');
 
-      await db.query(sql);
+      await db.query(sql); // Execute entire SQL file in one round-trip
       console.log(`✓ Migration ${file} completed successfully`);
     }
 
@@ -44,7 +44,7 @@ async function runMigrations() {
     process.exit(1);
   } finally {
     // Close database connection
-    await db.pool.end();
+    await db.pool.end(); // Important for CLI exit
   }
 }
 

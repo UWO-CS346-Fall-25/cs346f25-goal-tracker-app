@@ -1,68 +1,73 @@
-// src/models/Goal.js
-const { supabase }  = require('./supabaseClient');
+const { supabase } = require('./supabaseClient');
 const TABLE = 'newgoal';
 
-exports.allByUser = async () => {
-  //const query = supabase.from(TABLE).select('*').order('due', { ascending: true });
-  //const q = id ? query.eq('id', id) : query;
-  const { data, error } = await supabase
-  .from(TABLE)
-    .select('*')
-    .order('due', { ascending: true });
+module.exports = {
+  // Fetch every goal owned by the signed-in user, ordered by due date
+  async allByUser(userId) {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('*')
+      .eq('user_id', userId)
+      .order('due', { ascending: true });
 
-  if (error) throw error;
-  return data ?? [];
-};
+    if (error) throw error;
+    return data || [];
+  },
 
-
-exports.findById = async (id) => {
-  let q = supabase.from(TABLE).select('*').eq('id', id).single();
-  // To scope by user, add user_id filter when userId provided
-  if (id) {
-    // Supabase doesn't allow adding another eq after single() easily, so build query without single()
+  // Retrieve a single goal scoped to the user (protects against ID tampering)
+  async findById(id, userId) {
     const { data, error } = await supabase
       .from(TABLE)
       .select('*')
       .eq('id', id)
-      //.eq('user_id', userId)
-      .single();
-    if (error && error.code !== 'PGRST116') throw error;
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
     return data || null;
-  }
-
-  const { data, error } = await q;
-  if (error && error.code !== 'PGRST116') throw error;
-  return data || null;
-};
-
-exports.create = async ({ title, description, due }) => {
-  const row = {
-  goalname: title,
-  description: description || null,
-  due: due || null,  
-  };
-  const { data, error } = await supabase
-    .from(TABLE)
-    .insert(row)
-    .select('id')
-    .single();
-  if (error) throw error;
-  return data; 
-};
-
-exports.update = async (id, _userId, { title, description, due }) => {
-  const { error } = await supabase
-    .from(TABLE)
-    .update({
+  },
+  // Insert a new goal row using friendly field names from controllers/forms
+  async create({ title, description, due, user_id }) {
+    const row = {
       goalname: title,
-      description: description ?? null,
-      due: due ?? null,
-    })
-    .eq('id', id);
-  if (error) throw error;
-};
+      description: description || null,
+      due: due || null,
+      user_id,
+    };
 
-exports.destroy = async (id, _userId) => {
-  const { error } = await supabase.from(TABLE).delete().eq('id', id);
-  if (error) throw error;
+    const { data, error } = await supabase
+      .from(TABLE)
+      .insert(row)
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Update only when both goal id and user id match
+  async update(id, userId, { title, description, due }) {
+    const { error } = await supabase
+      .from(TABLE)
+      .update({
+        goalname: title,
+        description: description || null,
+        due: due || null,
+      })
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  },
+
+  // Hard-delete a goal that belongs to the current user
+  async destroy(id, userId) {
+    const { error } = await supabase
+      .from(TABLE)
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  },
 };

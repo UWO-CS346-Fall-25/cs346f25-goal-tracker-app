@@ -1,3 +1,4 @@
+<!-- About page hero uses Unsplash background injected via data attribute -->
 	<div class="about-page" data-bg="<%= aboutPhoto?.urls?.regular || '' %>">
 	<section class="about-overlay container" style="max-width: 720px;">
 	<h1>About Goal Tracker</h1>
@@ -13,12 +14,13 @@
 </section>
 </div>
 <script>
-	(function () {
-	  const el = document.querySelector('.about-page');
-	  if (!el) return;
-	  const bg = el.dataset.bg;
-	  if (bg) {
-		el.style.backgroundImage = `url(${bg})`;
-	  }
-	})();
-  </script>
+		// Hydrate hero background once DOM is ready so CSS can animate it
+		(function () {
+			const el = document.querySelector('.about-page');
+			if (!el) return;
+			const bg = el.dataset.bg;
+			if (bg) {
+				el.style.backgroundImage = `url(${bg})`;
+			}
+		})();
+	</script>

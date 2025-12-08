@@ -1,0 +1,65 @@
+<!-- Full-page milestone manager broken into completed vs incomplete sections -->
+<section class="features">
+    <h2><%= goal.goalname %> – Milestones</h2>
+    <p><a href="/goals/<%= goal.id %>">Back to goal</a></p>
+  
+    <h3>Uncompleted</h3>
+    <% if (!incomplete || incomplete.length === 0) { %>
+      <p>No uncompleted milestones.</p>
+    <% } else { %>
+      <ul style="margin-left:1.25rem">
+        <% incomplete.forEach(m => { %>
+          <li style="margin:.35rem 0">
+            <strong><%= m.title %></strong>
+            <small> (due: <%= m.due_date || '—' %>)</small>
+  
+            <!-- Toggle + delete actions post to goalController handlers -->
+            <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" class="inline" style="margin-left:.5rem">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn" type="submit">Complete</button>
+            </form>
+  
+            <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/delete" method="POST" class="inline" style="margin-left:.25rem">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn" type="submit">Delete</button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  
+    <h3>Completed</h3>
+    <% if (!complete || complete.length === 0) { %>
+      <p>No completed milestones.</p>
+    <% } else { %>
+      <ul style="margin-left:1.25rem">
+        <% complete.forEach(m => { %>
+          <li style="margin:.35rem 0">
+            ✅ <strong><%= m.title %></strong>
+            <small> (due: <%= m.due_date || '—' %>)</small>
+            <form action="/goals/<%= goal.id %>/milestones/<%= m.id %>/toggle" method="POST" class="inline" style="margin-left:.5rem">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn" type="submit">Mark Incomplete</button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  
+    <hr />
+  
+    <h3>Add milestone</h3>
+    <form action="/goals/<%= goal.id %>/milestones" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label for="m_title">Title</label>
+        <input id="m_title" name="title" required />
+      </div>
+      <div class="form-group">
+        <label for="m_due">Due date</label>
+        <input id="m_due" type="date" name="due_date" />
+      </div>
+      <button class="btn" type="submit">Add</button>
+    </form>
+  </section>
+  

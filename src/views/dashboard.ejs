@@ -1,3 +1,4 @@
+<!-- Dashboard aggregates stats + quick actions for authenticated users -->
 <div class="page-header">
   <h1>Dashboard</h1>
 
@@ -7,6 +8,7 @@
     </p>
   <% } %>
 </div>
+<!-- Floating shortcuts (new goal, logout, etc.) -->
 <%- include('partials/quick-actions', { csrfToken }) %>
 
 <section class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0;">
@@ -34,6 +36,7 @@
 </div>
 
 <script>
+  // Apply Unsplash photography to stat cards after render
   document.querySelectorAll('.stat-card').forEach(card => {
     const bg = card.dataset.bg;
     if (bg) {
@@ -44,7 +47,7 @@
 
 <section style="margin-top:2rem;">
   <h2>Weekly Completion</h2>
-  <!-- If you include Chart.js later, main.js can read these data-attributes -->
+  <!-- Chart.js can hydrate the canvas by reading data-* payloads from server -->
   <canvas id="progressChart"
           width="600" height="260"
           data-labels='<%- JSON.stringify(chart?.labels || []) %>'

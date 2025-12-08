@@ -15,6 +15,8 @@
 
 const { supabase } = require('./supabaseClient');
 
+// Shared helpers for interacting with the `users` table
+
 class User {
   /**
    * Find all users
@@ -24,7 +26,7 @@ class User {
     const { data, error } = await supabase
       .from('users')
       .select('id, email, display_name, created_at')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }); // newest accounts first
     if (error) throw error;
     return data || [];
   }
@@ -60,30 +62,15 @@ class User {
   }
 
   /**
-   * Create a new user
-   * @param {object} userData - User data { username, email, password }
-   * @returns {Promise<object>} Created user object
-   */
-  static async createProfile({ id, email, username }) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert({ id, email, display_name: username })
-      .select('id, email, display_name, created_at')
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  /**
    * Update user
    * @param {number} id - User ID
    * @param {object} userData - User data to update
    * @returns {Promise<object>} Updated user object
    */
   static async updateProfile(id, { email, username } = {}) {
-    const patch = {};
-    if (email !== undefined) patch.email = email;
-    if (username !== undefined) patch.display_name = username;
+    const patch = {}; // Only send fields supplied by caller
+    if (email) patch.email = email;
+    if (username) patch.display_name = username;
 
     const { data, error } = await supabase
       .from('users')
